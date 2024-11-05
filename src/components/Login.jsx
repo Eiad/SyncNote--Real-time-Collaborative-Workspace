@@ -8,9 +8,11 @@ const Login = () => {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  const correctPassword = process.env.NEXT_PUBLIC_PASSWORD;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === 'ashoo') {
+    if (password === correctPassword) {
       Cookies.set('isAuthenticated', 'true', { expires: 30 });
       router.push('/dashboard');
     } else {
