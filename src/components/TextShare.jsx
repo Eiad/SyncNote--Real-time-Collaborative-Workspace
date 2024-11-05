@@ -62,14 +62,16 @@ const TextShare = ({ documentId }) => {
         onKeyDown={handleKeyDown}
         placeholder="Start typing here... (Press Enter to save, Shift + Enter for new line)"
       />
-      <button 
-        className={styles.saveButton}
-        onClick={handleSave}
-        disabled={saving}
-        type="button"
-      >
-        {saving ? 'Saving...' : 'Save'}
-      </button>
+      <div className={styles.saveButtonContainer}>
+        <button 
+          className={styles.saveButton}
+          onClick={handleSave}
+          disabled={saving}
+          type="button"
+        >
+          {saving ? 'Saving...' : 'Save'}
+        </button>
+      </div>
       {error && (
         <div className={styles.error}>
           {error}

@@ -4,6 +4,11 @@
   overflow: hidden;
   transition: all 0.3s ease;
   margin-bottom: 2rem;
+  width: 65%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .textarea {
@@ -37,9 +42,8 @@
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  margin: 12px auto 0 auto;
+    width: 300px;
   
   &:hover {
     background: #404040;
@@ -49,6 +53,10 @@
     background: #94a3b8;
     cursor: not-allowed;
   }
+}
+
+.saveButtonContainer {
+  text-align: center;
 }
 
 .loading {

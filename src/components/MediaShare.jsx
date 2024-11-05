@@ -174,24 +174,26 @@ const MediaShare = ({ documentId }) => {
         />
       )}
       
-      <CldUploadWidget
-        cloudName="drkarc7oe"
-        uploadPreset="syncnote"
-        onSuccess={handleUploadSuccess}
-        options={{
-          maxFiles: 10,
-          sources: ['local', 'camera', 'url'],
-          resourceType: "image",
-          clientAllowedFormats: ["png", "gif", "jpeg", "jpg"],
-          maxFileSize: 10000000
-        }}
-      >
-        {({ open }) => (
-          <button className={styles.uploadButton} onClick={() => open()}>
-            Upload Image
-          </button>
-        )}
-      </CldUploadWidget>
+      <div className={styles.uploadButtonContainer}>
+        <CldUploadWidget
+          cloudName="drkarc7oe"
+          uploadPreset="syncnote"
+          onSuccess={handleUploadSuccess}
+          options={{
+            maxFiles: 10,
+            sources: ['local', 'camera', 'url'],
+            resourceType: "image",
+            clientAllowedFormats: ["png", "gif", "jpeg", "jpg"],
+            maxFileSize: 10000000
+          }}
+        >
+          {({ open }) => (
+            <button className={styles.uploadButton} onClick={() => open()}>
+              Upload Media
+            </button>
+          )}
+        </CldUploadWidget>
+      </div>
       
       {loading && <div className={styles.loading}>Uploading media...</div>}
       {error && <div className={styles.error}>{error}</div>}
