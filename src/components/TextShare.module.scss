@@ -43,8 +43,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin: 12px auto 0 auto;
-    width: 300px;
-  
+  width: 300px;
+  max-width: 100%;
   &:hover {
     background: #404040;
   }

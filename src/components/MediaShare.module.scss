@@ -90,6 +90,7 @@
   transition: all 0.3s ease;
   margin: 0 auto;
   width: 300px;
+  max-width: 100%;
   
   &:hover {
     background: #2563eb;
@@ -140,7 +141,7 @@
   .header {
     flex-direction: column;
     gap: 1rem;
-    align-items: flex-start;
+    align-items: center;
   }
   
   .imageGrid {
