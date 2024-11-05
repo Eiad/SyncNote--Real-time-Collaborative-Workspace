@@ -1,8 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import TextShare from '@/components/TextShare';
 import styles from '@/styles/Home.module.scss';
 
-export default function Home() {
+const Dashboard = () => {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const auth = sessionStorage.getItem('isAuthenticated');
+    if (!auth) {
+      router.push('/');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -19,4 +36,6 @@ export default function Home() {
       </footer>
     </div>
   );
-} 
+};
+
+export default Dashboard; 

@@ -3,7 +3,7 @@ import { db } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import styles from './TextShare.module.scss';
 
-export default function TextShare({ documentId }) {
+const TextShare = ({ documentId }) => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,6 +42,13 @@ export default function TextShare({ documentId }) {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
   if (loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
@@ -52,21 +59,30 @@ export default function TextShare({ documentId }) {
         className={styles.textarea}
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Start typing here..."
+        onKeyDown={handleKeyDown}
+        placeholder="Start typing here... (Press Enter to save, Shift + Enter for new line)"
       />
       <button 
         className={styles.saveButton}
         onClick={handleSave}
         disabled={saving}
+        type="button"
       >
         {saving ? 'Saving...' : 'Save'}
       </button>
       {error && (
         <div className={styles.error}>
           {error}
-          <button onClick={handleSave}>Retry</button>
+          <button 
+            onClick={handleSave}
+            type="button"
+          >
+            Retry
+          </button>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default TextShare; 

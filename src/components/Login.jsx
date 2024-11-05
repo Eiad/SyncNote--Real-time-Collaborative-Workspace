@@ -1,0 +1,42 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import styles from './Login.module.scss';
+
+const Login = () => {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password === 'ashoo') {
+      sessionStorage.setItem('isAuthenticated', 'true');
+      router.push('/dashboard');
+    } else {
+      setError('Incorrect password');
+    }
+  };
+
+  return (
+    <div className={styles.loginContainer}>
+      <h1>SyncNote</h1>
+      <p>Enter password to access the application</p>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
+          className={styles.input}
+          required
+        />
+        {error && <p className={styles.error}>{error}</p>}
+        <button type="submit" className={styles.button}>
+          Login
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Login; 

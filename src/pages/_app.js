@@ -1,22 +1,21 @@
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import '@/styles/globals.scss';
-import localFont from "next/font/local";
-
-const geistSans = localFont({
-  src: "../app/fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-
-const geistMono = localFont({
-  src: "../app/fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import '@fontsource/poppins';
 
 export default function App({ Component, pageProps }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+    if (!isAuthenticated && router.pathname !== '/') {
+      router.push('/');
+    }
+  }, [router]);
+
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable}`}>
+    <main>
       <Component {...pageProps} />
-    </div>
+    </main>
   );
 } 
