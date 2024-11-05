@@ -3,12 +3,14 @@ import { db } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import { CldUploadWidget } from 'next-cloudinary';
 import styles from './MediaShare.module.scss';
+import ImageModal from './ImageModal';
 
 const MediaShare = ({ documentId }) => {
   const [mediaUrls, setMediaUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const docRef = doc(db, 'media', documentId);
@@ -153,11 +155,24 @@ const MediaShare = ({ documentId }) => {
 
       <div className={styles.imageGrid}>
         {mediaUrls.map((url, index) => (
-          <div key={index} className={styles.imageWrapper}>
+          <div 
+            key={index} 
+            className={styles.imageWrapper}
+            onClick={() => setSelectedImage(url)}
+          >
             <img src={url} alt={`Shared media ${index + 1}`} />
+            <div className={styles.imageOverlay}>
+              <span>Click to view</span>
+            </div>
           </div>
         ))}
       </div>
+      {selectedImage && (
+        <ImageModal 
+          imageUrl={selectedImage} 
+          onClose={() => setSelectedImage(null)} 
+        />
+      )}
       
       <CldUploadWidget
         cloudName="drkarc7oe"
