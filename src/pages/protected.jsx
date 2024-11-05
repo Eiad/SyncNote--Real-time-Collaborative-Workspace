@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 const ProtectedPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const loggedIn = sessionStorage.getItem('loggedIn');
+    const loggedIn = Cookies.get('isAuthenticated');
     if (!loggedIn) {
       router.push('/login'); // Redirect to login if not logged in
     }

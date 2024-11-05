@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 import '@/styles/globals.scss';
 import '@fontsource/poppins';
 
@@ -7,7 +8,7 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+    const isAuthenticated = Cookies.get('isAuthenticated');
     if (!isAuthenticated && router.pathname !== '/') {
       router.push('/');
     }

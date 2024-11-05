@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 import styles from './Login.module.scss';
 
 const Login = () => {
@@ -10,7 +11,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password === 'ashoo') {
-      sessionStorage.setItem('isAuthenticated', 'true');
+      Cookies.set('isAuthenticated', 'true', { expires: 30 });
       router.push('/dashboard');
     } else {
       setError('Incorrect password');

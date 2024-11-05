@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 import TextShare from '@/components/TextShare';
 import styles from '@/styles/Home.module.scss';
 
@@ -8,7 +9,7 @@ const Dashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('isAuthenticated');
+    const auth = Cookies.get('isAuthenticated');
     if (!auth) {
       router.push('/');
     } else {
@@ -30,7 +31,7 @@ const Dashboard = () => {
       <main className={styles.main}>
         <TextShare documentId="shared-text-1" />
       </main>
-
+      
       <footer className={styles.footer}>
         <p>Share the URL with others to collaborate in real-time</p>
       </footer>
