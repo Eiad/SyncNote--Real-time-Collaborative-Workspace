@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import TextShare from '@/components/TextShare';
+import MediaShare from '@/components/MediaShare';
 import styles from '@/styles/Home.module.scss';
 
 const Dashboard = () => {
@@ -30,6 +31,7 @@ const Dashboard = () => {
       
       <main className={styles.main}>
         <TextShare documentId="shared-text-1" />
+        <MediaShare documentId="shared-text-1" />
       </main>
       
       <footer className={styles.footer}>
