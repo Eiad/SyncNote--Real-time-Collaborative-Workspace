@@ -15,7 +15,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const auth = Cookies.get('isAuthenticated');
+    const auth = Cookies.get('isCodeSynceAuthenticated');
     if (!auth) {
       router.push('/');
     } else {

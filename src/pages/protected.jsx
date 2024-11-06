@@ -6,7 +6,7 @@ const ProtectedPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const loggedIn = Cookies.get('isAuthenticated');
+    const loggedIn = Cookies.get('isCodeSynceAuthenticated');
     if (!loggedIn) {
       router.push('/login'); // Redirect to login if not logged in
     }

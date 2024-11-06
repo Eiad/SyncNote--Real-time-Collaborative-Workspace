@@ -13,7 +13,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password === correctPassword) {
-      Cookies.set('isAuthenticated', 'true', { expires: 30 });
+      Cookies.set('isCodeSynceAuthenticated', 'true', { expires: 30 });
       router.push('/dashboard');
     } else {
       setError('Incorrect password');

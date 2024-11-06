@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    const isAuthenticated = Cookies.get('isAuthenticated');
+    const isAuthenticated = Cookies.get('isCodeSynceAuthenticated');
     if (!isAuthenticated && router.pathname !== '/') {
       router.push('/');
     }

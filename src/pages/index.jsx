@@ -8,7 +8,7 @@ const Home = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const isAuthenticated = Cookies.get('isAuthenticated');
+    const isAuthenticated = Cookies.get('isCodeSynceAuthenticated');
     if (isAuthenticated) {
       router.push('/dashboard');
     }
