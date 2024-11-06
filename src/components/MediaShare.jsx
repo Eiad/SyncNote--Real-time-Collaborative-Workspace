@@ -94,7 +94,7 @@ const MediaShare = ({ documentId, handlePaste }) => {
             onClick={handleDeleteAll}
             disabled={deleting}
           >
-            {deleting ? 'Deleting...' : 'Delete All Images'}
+            {deleting ? 'Deleting...' : 'Clear'}
           </button>
         )}
       </div>
