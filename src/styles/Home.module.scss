@@ -67,3 +67,23 @@
     background: #1e293b;
   }
 }
+
+.globalLoading,
+.globalError {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  z-index: 1000;
+}
+
+.globalLoading {
+  background: #3b82f6;
+  color: white;
+}
+
+.globalError {
+  background: #ef4444;
+  color: white;
+}

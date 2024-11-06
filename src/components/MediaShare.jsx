@@ -5,7 +5,7 @@ import { CldUploadWidget } from 'next-cloudinary';
 import styles from './MediaShare.module.scss';
 import ImageModal from './ImageModal';
 
-const MediaShare = ({ documentId }) => {
+const MediaShare = ({ documentId, handlePaste }) => {
   const [mediaUrls, setMediaUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,56 +23,6 @@ const MediaShare = ({ documentId }) => {
 
     return () => unsubscribe();
   }, [documentId]);
-
-  const handlePaste = async (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-    
-    for (let item of items) {
-      if (item.type.indexOf('image') !== -1) {
-        setLoading(true);
-        setError(null);
-        try {
-          const file = item.getAsFile();
-          if (!file) {
-            throw new Error('Failed to get image from clipboard');
-          }
-
-          const formData = new FormData();
-          formData.append('file', file);
-          
-          const response = await fetch('/api/uploadImage', {
-            method: 'POST',
-            body: formData,
-          });
-          
-          const data = await response.json();
-          
-          if (!response.ok) {
-            throw new Error(data.error || data.message || 'Upload failed');
-          }
-          
-          if (!data.secure_url) {
-            throw new Error('No secure URL received from server');
-          }
-
-          const docRef = doc(db, 'media', documentId);
-          const docSnap = await getDoc(docRef);
-          const currentUrls = docSnap.exists() ? docSnap.data().urls || [] : [];
-          
-          await setDoc(docRef, {
-            urls: [...currentUrls, data.secure_url]
-          }, { merge: true });
-
-        } catch (err) {
-          console.error('Paste upload error:', err);
-          setError(`Error uploading image: ${err.message}`);
-        } finally {
-          setLoading(false);
-        }
-      }
-    }
-  };
 
   const handleUploadSuccess = async (result) => {
     try {
@@ -135,11 +85,7 @@ const MediaShare = ({ documentId }) => {
   };
 
   return (
-    <div 
-      className={styles.container}
-      onPaste={handlePaste}
-      tabIndex={0}
-    >
+    <div className={styles.container}>
       <div className={styles.header}>
         <h2>Media Sharing</h2>
         {mediaUrls.length > 0 && (
@@ -204,4 +150,4 @@ const MediaShare = ({ documentId }) => {
   );
 };
 
-export default MediaShare; 
+export default MediaShare;

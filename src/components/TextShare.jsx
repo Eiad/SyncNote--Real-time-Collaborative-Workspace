@@ -43,7 +43,7 @@ const TextShare = ({ documentId }) => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleSave();
     }
@@ -60,7 +60,7 @@ const TextShare = ({ documentId }) => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Start typing here... (Press Enter to save, Shift + Enter for new line)"
+        placeholder="Start typing here... (Press Cmd/Ctrl + Enter to save)"
       />
       <div className={styles.saveButtonContainer}>
         <button 
