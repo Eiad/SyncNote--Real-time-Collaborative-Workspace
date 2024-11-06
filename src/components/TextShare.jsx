@@ -8,6 +8,7 @@ const TextShare = ({ documentId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [clearing, setClearing] = useState(false);
 
   useEffect(() => {
     const docRef = doc(db, 'texts', documentId);
@@ -28,18 +29,25 @@ const TextShare = ({ documentId }) => {
     return () => unsubscribe();
   }, [documentId]);
 
-  const handleSave = async () => {
+  const handleSave = async (clearText = false) => {
     setError(null);
     setSaving(true);
+    if (clearText) setClearing(true);
     
     try {
       const docRef = doc(db, 'texts', documentId);
-      await setDoc(docRef, { content: text }, { merge: true });
+      await setDoc(docRef, { content: clearText ? '' : text }, { merge: true });
+      if (clearText) setText('');
     } catch (err) {
       setError('Error saving: ' + err.message);
     } finally {
       setSaving(false);
+      setClearing(false);
     }
+  };
+
+  const handleClearAndSave = () => {
+    handleSave(true);
   };
 
   const handleKeyDown = (e) => {
@@ -62,21 +70,31 @@ const TextShare = ({ documentId }) => {
         onKeyDown={handleKeyDown}
         placeholder="Start typing here... (Press Cmd/Ctrl + Enter to save)"
       />
-      <div className={styles.saveButtonContainer}>
-        <button 
-          className={styles.saveButton}
-          onClick={handleSave}
-          disabled={saving}
-          type="button"
-        >
-          {saving ? 'Saving...' : 'Save'}
-        </button>
+      <div className={styles.buttonContainer}>
+        <div className={styles.buttonGroup}>
+          <button 
+            className={styles.saveButton}
+            onClick={() => handleSave()}
+            disabled={saving || clearing}
+            type="button"
+          >
+            {saving ? 'Saving...' : 'Save'}
+          </button>
+          <button 
+            className={`${styles.clearButton}`}
+            onClick={handleClearAndSave}
+            disabled={saving || clearing || !text}
+            type="button"
+          >
+            {clearing ? 'Clearing...' : 'Clear'}
+          </button>
+        </div>
       </div>
       {error && (
         <div className={styles.error}>
           {error}
           <button 
-            onClick={handleSave}
+            onClick={() => handleSave()}
             type="button"
           >
             Retry

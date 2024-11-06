@@ -42,9 +42,7 @@
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 12px auto 0 auto;
-  width: 300px;
-  max-width: 100%;
+  
   &:hover {
     background: #404040;
   }
@@ -53,6 +51,40 @@
     background: #94a3b8;
     cursor: not-allowed;
   }
+}
+
+.clearButton {
+  padding: 0.75rem 1.5rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #b91c1c;
+  }
+  
+  &:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
 }
 
 .saveButtonContainer {
@@ -100,5 +132,17 @@
     &:focus {
       border-color: #3b82f6;
     }
+  }
+}
+
+@media (max-width: 640px) {
+  .buttonGroup {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .saveButton,
+  .clearButton {
+    width: 100%;
   }
 }
