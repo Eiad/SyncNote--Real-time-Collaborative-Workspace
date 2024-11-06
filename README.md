@@ -1,13 +1,15 @@
 # Welcome to SyncNote! 🎉
 
 ![SyncNote Screenshot](public/assets/syncnote-screenshot.png)
+** &nbsp;  
+
+ &nbsp;  
+  
 
 <div style="text-align: center;">
   Welcome to SyncNote! 🎉
 </div>
 
-&nbsp;  
-&nbsp;  
 
 SyncNote is your go-to real-time collaborative platform for sharing text and media with your friends, colleagues, or that one person who always forgets to save their work. With SyncNote, you can share notes, images, and collaborate in real-time like a pro!
 
