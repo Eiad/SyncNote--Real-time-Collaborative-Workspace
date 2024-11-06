@@ -1,5 +1,5 @@
 # Welcome to SyncNote! 🎉
-** &nbsp;  
+
 
  &nbsp;  
   
