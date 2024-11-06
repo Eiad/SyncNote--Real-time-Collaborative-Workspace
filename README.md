@@ -1,10 +1,10 @@
 # Welcome to SyncNote! 🎉
-
-![SyncNote Screenshot](public/assets/syncnote-screenshot.png)
 ** &nbsp;  
 
  &nbsp;  
   
+
+![SyncNote Screenshot](public/assets/syncnote-screenshot.png)
 
 <div style="text-align: center;">
   Welcome to SyncNote! 🎉
