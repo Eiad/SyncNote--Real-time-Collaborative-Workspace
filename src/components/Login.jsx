@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { auth, googleProvider } from '@/lib/firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { FiLock } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import styles from './Login.module.scss';
@@ -55,10 +55,21 @@ const Login = () => {
     await withLoadingDelay(async () => {
       try {
         setError('');
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
         await signInWithPopup(auth, googleProvider);
         router.push('/dashboard');
       } catch (error) {
-        setError('Failed to sign in with Google: ' + error.message);
+        console.error('Google Sign In Error:', error);
+        if (error.code === 'auth/unauthorized-domain') {
+          setError('This domain is not authorized for authentication. Please contact the administrator.');
+        } else if (error.code === 'auth/popup-closed-by-user') {
+          setError('Sign in was cancelled. Please try again.');
+        } else {
+          setError(`Failed to sign in with Google: ${error.message}`);
+        }
       }
     });
   };
