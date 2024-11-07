@@ -31,12 +31,12 @@
   }
 }
 
-.saveButton, .clearButton {
+.saveButton {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1.25rem;
   background: #171717;
   color: white;
   border: none;
@@ -46,6 +46,7 @@
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 160px;
   
   &:hover {
     background: #404040;
@@ -63,7 +64,7 @@
 }
 
 .clearButton {
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   background: #dc2626;
   color: white;
   border: none;
@@ -73,6 +74,11 @@
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   
   &:hover {
     background: #b91c1c;

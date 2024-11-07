@@ -4,6 +4,7 @@ import { auth, googleProvider } from '@/lib/firebase';
 import { signInWithPopup } from 'firebase/auth';
 import styles from './Login.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
+import GlobalLoader from './GlobalLoader';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -18,71 +19,86 @@ const Login = () => {
     }
   }, [user, router]);
 
-  const handlePasswordLogin = async (e) => {
-    e.preventDefault();
+  const withLoadingDelay = async (callback) => {
     setLoading(true);
+    const startTime = Date.now();
+    
     try {
-      if (password === 'ashoo') {
-        localStorage.setItem('isAshLoggedIn', 'true');
-        window.location.href = '/dashboard';
-      } else {
-        setError('Invalid password');
-      }
-    } catch (error) {
-      setError('Login failed: ' + error.message);
+      await callback();
     } finally {
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(1500 - elapsedTime, 0);
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
       setLoading(false);
     }
+  };
+
+  const handlePasswordLogin = async (e) => {
+    e.preventDefault();
+    await withLoadingDelay(async () => {
+      try {
+        if (password === 'ashoo') {
+          localStorage.setItem('isAshLoggedIn', 'true');
+          window.location.href = '/dashboard';
+        } else {
+          setError('Invalid password');
+        }
+      } catch (error) {
+        setError('Login failed: ' + error.message);
+      }
+    });
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      await signInWithPopup(auth, googleProvider);
-      router.push('/dashboard');
-    } catch (error) {
-      setError('Failed to sign in with Google: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
+    await withLoadingDelay(async () => {
+      try {
+        setError('');
+        await signInWithPopup(auth, googleProvider);
+        router.push('/dashboard');
+      } catch (error) {
+        setError('Failed to sign in with Google: ' + error.message);
+      }
+    });
   };
 
   return (
-    <div className={styles.loginContainer}>
-      <h1>SyncNote</h1>
-      <p>Sign in to access your notes</p>
-      
-      <form onSubmit={handlePasswordLogin} className={styles.form}>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter password for Ash"
-          className={styles.input}
+    <>
+      {loading && <GlobalLoader message="Logging in..." />}
+      <div className={styles.loginContainer}>
+        <h1>SyncNote</h1>
+        <p>Sign in to access your notes</p>
+        
+        <form onSubmit={handlePasswordLogin} className={styles.form}>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password for Ash"
+            className={styles.input}
+            disabled={loading}
+          />
+          <button 
+            type="submit" 
+            className={styles.button}
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login as Ash'}
+          </button>
+        </form>
+
+        <div className={styles.divider}>or</div>
+
+        <button
+          onClick={handleGoogleLogin}
           disabled={loading}
-        />
-        <button 
-          type="submit" 
-          className={styles.button}
-          disabled={loading}
+          className={styles.googleButton}
         >
-          {loading ? 'Logging in...' : 'Login as Ash'}
+          {loading ? 'Signing in...' : 'Sign in with Google'}
         </button>
-      </form>
-
-      <div className={styles.divider}>or</div>
-
-      <button
-        onClick={handleGoogleLogin}
-        disabled={loading}
-        className={styles.googleButton}
-      >
-        {loading ? 'Signing in...' : 'Sign in with Google'}
-      </button>
-      
-      {error && <p className={styles.error}>{error}</p>}
-    </div>
+        
+        {error && <p className={styles.error}>{error}</p>}
+      </div>
+    </>
   );
 };
 
