@@ -56,19 +56,32 @@ const Login = () => {
       try {
         setError('');
         const provider = new GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        
         provider.setCustomParameters({
           prompt: 'select_account'
         });
-        await signInWithPopup(auth, googleProvider);
-        router.push('/dashboard');
+
+        const result = await signInWithPopup(auth, provider);
+        if (result.user) {
+          router.push('/dashboard');
+        }
       } catch (error) {
         console.error('Google Sign In Error:', error);
-        if (error.code === 'auth/unauthorized-domain') {
-          setError('This domain is not authorized for authentication. Please contact the administrator.');
-        } else if (error.code === 'auth/popup-closed-by-user') {
-          setError('Sign in was cancelled. Please try again.');
-        } else {
-          setError(`Failed to sign in with Google: ${error.message}`);
+        
+        switch (error.code) {
+          case 'auth/unauthorized-domain':
+            setError('This domain is not authorized. Please try again later or contact support.');
+            break;
+          case 'auth/popup-closed-by-user':
+            setError('Sign-in cancelled. Please try again.');
+            break;
+          case 'auth/popup-blocked':
+            setError('Pop-up blocked by browser. Please allow pop-ups for this site.');
+            break;
+          default:
+            setError(`Authentication failed: ${error.message}`);
         }
       }
     });
