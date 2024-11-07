@@ -1,18 +1,26 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
+import { useAuth } from '@/contexts/AuthContext';
 import Login from '@/components/Login';
 import styles from '@/styles/Home.module.scss';
 
 const Home = () => {
   const router = useRouter();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const isAuthenticated = Cookies.get('isCodeSynceAuthenticated');
-    if (isAuthenticated) {
+    if (!loading && user) {
       router.push('/dashboard');
     }
-  }, [router]);
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (user) {
+    return null; // Will redirect in useEffect
+  }
 
   return (
     <div className={styles.container}>

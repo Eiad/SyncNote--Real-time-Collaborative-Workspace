@@ -150,7 +150,34 @@
   margin-top: 1rem;
 } 
 
-.loading{
-  font-size: 22px;
-  text-align: center;
+.loading {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  font-family: 'Poppins', sans-serif;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .loading {
+    background: #2563eb;
+  }
 }

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { useAuth } from '@/contexts/AuthContext';
 import styles from './TextShare.module.scss';
 
 const TextShare = ({ documentId }) => {
+  const { user } = useAuth();
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +13,9 @@ const TextShare = ({ documentId }) => {
   const [clearing, setClearing] = useState(false);
 
   useEffect(() => {
-    const docRef = doc(db, 'texts', documentId);
+    if (!user) return;
+
+    const docRef = doc(db, `users/${user.uid}/texts`, documentId);
     
     const unsubscribe = onSnapshot(docRef, 
       (doc) => {
@@ -27,7 +31,7 @@ const TextShare = ({ documentId }) => {
     );
 
     return () => unsubscribe();
-  }, [documentId]);
+  }, [documentId, user]);
 
   const handleSave = async (clearText = false) => {
     setError(null);
@@ -35,7 +39,7 @@ const TextShare = ({ documentId }) => {
     if (clearText) setClearing(true);
     
     try {
-      const docRef = doc(db, 'texts', documentId);
+      const docRef = doc(db, `users/${user.uid}/texts`, documentId);
       await setDoc(docRef, { content: clearText ? '' : text }, { merge: true });
       if (clearText) setText('');
     } catch (err) {

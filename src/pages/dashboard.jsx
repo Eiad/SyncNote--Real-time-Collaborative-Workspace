@@ -1,114 +1,78 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Cookies from 'js-cookie';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
+import { auth } from '@/lib/firebase';
+import { FiLogOut } from 'react-icons/fi';
 import TextShare from '@/components/TextShare';
 import MediaShare from '@/components/MediaShare';
 import styles from '@/styles/Home.module.scss';
 
 const Dashboard = () => {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { user, loading } = useAuth();
 
-  useEffect(() => {
-    const auth = Cookies.get('isCodeSynceAuthenticated');
-    if (!auth) {
-      router.push('/');
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [router]);
-
-  const handleGlobalPaste = async (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-    
-    for (let item of items) {
-      if (item.type.indexOf('image') !== -1) {
-        setLoading(true);
-        setError(null);
-        try {
-          const file = item.getAsFile();
-          if (!file) {
-            throw new Error('Failed to get image from clipboard');
-          }
-
-          const formData = new FormData();
-          formData.append('file', file);
-          
-          const response = await fetch('/api/uploadImage', {
-            method: 'POST',
-            body: formData,
-          });
-          
-          const data = await response.json();
-          
-          if (!response.ok) {
-            throw new Error(data.error || data.message || 'Upload failed');
-          }
-          
-          if (!data.secure_url) {
-            throw new Error('No secure URL received from server');
-          }
-
-          const docRef = doc(db, 'media', 'shared-text-1');
-          const docSnap = await getDoc(docRef);
-          const currentUrls = docSnap.exists() ? docSnap.data().urls || [] : [];
-          
-          await setDoc(docRef, {
-            urls: [...currentUrls, data.secure_url]
-          }, { merge: true });
-
-        } catch (err) {
-          console.error('Paste upload error:', err);
-          setError(`Error uploading image: ${err.message}`);
-        } finally {
-          setLoading(false);
-        }
-      }
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      localStorage.removeItem('isAshLoggedIn');
+      window.location.href = '/'; 
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
   };
 
   useEffect(() => {
-    document.addEventListener('paste', handleGlobalPaste);
-    return () => document.removeEventListener('paste', handleGlobalPaste);
-  }, []);
+    if (!loading && !user) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
 
-  if (!isAuthenticated) {
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
     return null;
   }
 
   return (
-    <>
-      <Head>
-        <title>Dashboard - SyncNote</title>
-        <meta name="description" content="Share and collaborate on text and media in real-time with SyncNote's dashboard." />
-        <meta property="og:title" content="Dashboard - SyncNote" />
-        <meta property="og:description" content="Share and collaborate on text and media in real-time with SyncNote's dashboard." />
-      </Head>
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <h1>SyncNote</h1>
-          <p>Real-time collaborative text sharing</p>
-        </header>
-        
-        <main className={styles.main}>
-          <TextShare documentId="shared-text-1" />
-          <MediaShare documentId="shared-text-1" />
-        </main>
-        
-        {loading && <div className={styles.globalLoading}>Uploading media...</div>}
-        {error && <div className={styles.globalError}>{error}</div>}
-        
-        <footer className={styles.footer}>
-          <p>Share the URL with others to collaborate in real-time</p>
-        </footer>
-      </div>
-    </>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.syncNote}>SyncNote</h1>
+          
+          <div className={styles.userSection}>
+            <div className={styles.userInfo}>
+              <span className={styles.welcomeText}>Welcome,</span>
+              <span className={styles.userName}>{user.displayName}</span>
+            </div>
+            
+            {user.photoURL && (
+              <div className={styles.avatarContainer}>
+                <img 
+                  src={user.photoURL} 
+                  alt="Profile" 
+                  className={styles.avatar}
+                />
+              </div>
+            )}
+            
+            <button 
+              onClick={handleLogout}
+              className={styles.logoutButton}
+              title="Sign Out"
+            >
+              <span className={styles.desktopText}>Sign Out</span>
+              <FiLogOut className={styles.logoutIcon} />
+            </button>
+          </div>
+        </div>
+      </header>
+      <main className={styles.main}>
+        <TextShare documentId={`${user.uid}-notes`} />
+        <MediaShare documentId={`${user.uid}-media`} />
+      </main>
+    </div>
   );
 };
 

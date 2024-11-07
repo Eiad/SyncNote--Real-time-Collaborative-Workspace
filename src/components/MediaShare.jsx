@@ -1,19 +1,71 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { db } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import { CldUploadWidget } from 'next-cloudinary';
 import styles from './MediaShare.module.scss';
 import ImageModal from './ImageModal';
+import { useAuth } from '@/contexts/AuthContext';
 
-const MediaShare = ({ documentId, handlePaste }) => {
+const MediaShare = ({ documentId }) => {
+  const { user } = useAuth();
   const [mediaUrls, setMediaUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [pasteLoading, setPasteLoading] = useState(false);
+
+  const handlePaste = useCallback(async (event) => {
+    const items = event.clipboardData?.items;
+    if (!items || !user) return;
+
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        const file = item.getAsFile();
+        if (!file) continue;
+
+        setPasteLoading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          const response = await fetch('/api/uploadImage', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to upload pasted image');
+          }
+
+          const data = await response.json();
+          const imageUrl = data.secure_url;
+
+          const docRef = doc(db, `users/${user.uid}/media`, documentId);
+          const docSnap = await getDoc(docRef);
+          const currentUrls = docSnap.exists() ? docSnap.data().urls || [] : [];
+
+          await setDoc(docRef, {
+            urls: [...currentUrls, imageUrl]
+          }, { merge: true });
+        } catch (err) {
+          setError('Error uploading pasted image: ' + err.message);
+        } finally {
+          setPasteLoading(false);
+        }
+      }
+    }
+  }, [user, documentId]);
 
   useEffect(() => {
-    const docRef = doc(db, 'media', documentId);
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, [handlePaste]);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    const docRef = doc(db, `users/${user.uid}/media`, documentId);
     
     const unsubscribe = onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
@@ -22,12 +74,12 @@ const MediaShare = ({ documentId, handlePaste }) => {
     });
 
     return () => unsubscribe();
-  }, [documentId]);
+  }, [documentId, user]);
 
   const handleUploadSuccess = async (result) => {
     try {
       const imageUrl = result.info.secure_url;
-      const docRef = doc(db, 'media', documentId);
+      const docRef = doc(db, `users/${user.uid}/media`, documentId);
       const docSnap = await getDoc(docRef);
       const currentUrls = docSnap.exists() ? docSnap.data().urls || [] : [];
       
@@ -74,7 +126,7 @@ const MediaShare = ({ documentId, handlePaste }) => {
       }
 
       // Clear Firebase storage
-      const docRef = doc(db, 'media', documentId);
+      const docRef = doc(db, `users/${user.uid}/media`, documentId);
       await setDoc(docRef, { urls: [] }, { merge: true });
       
     } catch (err) {
@@ -98,6 +150,12 @@ const MediaShare = ({ documentId, handlePaste }) => {
           </button>
         )}
       </div>
+
+      {pasteLoading && (
+        <div className={styles.loading}>
+          Uploading image...
+        </div>
+      )}
 
       <div className={styles.imageGrid}>
         {mediaUrls.map((url, index) => (
@@ -130,7 +188,28 @@ const MediaShare = ({ documentId, handlePaste }) => {
             sources: ['local', 'camera', 'url'],
             resourceType: "image",
             clientAllowedFormats: ["png", "gif", "jpeg", "jpg"],
-            maxFileSize: 10000000
+            maxFileSize: 10000000,
+            cropping: false,
+            multiple: true,
+            showAdvancedOptions: false,
+            showCompletedButton: true,
+            styles: {
+              palette: {
+                window: "#FFFFFF",
+                windowBorder: "#90A0B3",
+                tabIcon: "#0078FF",
+                menuIcons: "#5A616A",
+                textDark: "#000000",
+                textLight: "#FFFFFF",
+                link: "#0078FF",
+                action: "#FF620C",
+                inactiveTabIcon: "#0E2F5A",
+                error: "#F44235",
+                inProgress: "#0078FF",
+                complete: "#20B832",
+                sourceBg: "#E4EBF1"
+              }
+            }
           }}
         >
           {({ open }) => (
