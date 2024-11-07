@@ -3,7 +3,7 @@ import { db } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './TextShare.module.scss';
-import { FiTrash2, FiSave } from 'react-icons/fi';
+import { FiTrash2, FiSave, FiLoader } from 'react-icons/fi';
 
 const TextShare = ({ documentId }) => {
   const { user } = useAuth();
@@ -34,20 +34,23 @@ const TextShare = ({ documentId }) => {
     return () => unsubscribe();
   }, [documentId, user]);
 
-  const handleSave = async (clearText = false) => {
-    setError(null);
+  const handleSave = async (clear = false) => {
+    if (!user) return;
+    
     setSaving(true);
-    if (clearText) setClearing(true);
+    setError(null);
     
     try {
       const docRef = doc(db, `users/${user.uid}/texts`, documentId);
-      await setDoc(docRef, { content: clearText ? '' : text }, { merge: true });
-      if (clearText) setText('');
+      await setDoc(docRef, { content: text }, { merge: true });
+      
+      if (clear) {
+        setText('');
+      }
     } catch (err) {
       setError('Error saving: ' + err.message);
     } finally {
       setSaving(false);
-      setClearing(false);
     }
   };
 
@@ -80,28 +83,34 @@ const TextShare = ({ documentId }) => {
           <button 
             onClick={handleClearAndSave}
             className={styles.clearButton}
-            disabled={!text || loading}
+            disabled={!text || loading || saving}
           >
             <FiTrash2 className={styles.buttonIcon} />
             Clear
           </button>
           <button 
-            onClick={handleSave}
+            onClick={() => handleSave(false)}
             className={styles.saveButton}
-            disabled={loading}
+            disabled={loading || saving}
           >
-            <FiSave className={styles.buttonIcon} />
-            Save
+            {saving ? (
+              <>
+                <FiLoader className={`${styles.buttonIcon} ${styles.spinningIcon}`} />
+                Saving...
+              </>
+            ) : (
+              <>
+                <FiSave className={styles.buttonIcon} />
+                Save
+              </>
+            )}
           </button>
         </div>
       </div>
       {error && (
         <div className={styles.error}>
           {error}
-          <button 
-            onClick={() => handleSave()}
-            type="button"
-          >
+          <button onClick={() => handleSave(false)} type="button">
             Retry
           </button>
         </div>
