@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { auth, googleProvider } from '@/lib/firebase';
 import { signInWithPopup } from 'firebase/auth';
+import { FiLock } from 'react-icons/fi';
+import { FcGoogle } from 'react-icons/fc';
 import styles from './Login.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
 import GlobalLoader from './GlobalLoader';
@@ -65,38 +67,53 @@ const Login = () => {
     <>
       {loading && <GlobalLoader message="Logging in..." />}
       <div className={styles.loginContainer}>
-        <h1>SyncNote</h1>
-        <p>Sign in to access your notes</p>
-        
-        <form onSubmit={handlePasswordLogin} className={styles.form}>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password for Ash"
-            className={styles.input}
+        <div className={styles.loginCard}>
+          <div className={styles.logoSection}>
+            <h1 className={styles.logo}>SyncNote</h1>
+            <p className={styles.tagline}>Your collaborative workspace</p>
+          </div>
+
+          <form onSubmit={handlePasswordLogin} className={styles.form}>
+            <div className={styles.inputGroup}>
+              <FiLock className={styles.inputIcon} />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password for Ash"
+                className={styles.input}
+                disabled={loading}
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              className={styles.primaryButton}
+              disabled={loading}
+            >
+              Login as Ash
+            </button>
+          </form>
+
+          <div className={styles.divider}>
+            <span>or continue with</span>
+          </div>
+
+          <button
+            onClick={handleGoogleLogin}
             disabled={loading}
-          />
-          <button 
-            type="submit" 
-            className={styles.button}
-            disabled={loading}
+            className={styles.googleButton}
           >
-            {loading ? 'Logging in...' : 'Login as Ash'}
+            <FcGoogle />
+            Sign in with Google
           </button>
-        </form>
-
-        <div className={styles.divider}>or</div>
-
-        <button
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className={styles.googleButton}
-        >
-          {loading ? 'Signing in...' : 'Sign in with Google'}
-        </button>
-        
-        {error && <p className={styles.error}>{error}</p>}
+          
+          {error && (
+            <div className={styles.error}>
+              {error}
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
