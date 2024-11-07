@@ -42,7 +42,9 @@ const TextShare = ({ documentId }) => {
     
     try {
       const docRef = doc(db, `users/${user.uid}/texts`, documentId);
-      await setDoc(docRef, { content: text }, { merge: true });
+      await setDoc(docRef, { 
+        content: clear ? '' : text 
+      }, { merge: true });
       
       if (clear) {
         setText('');
