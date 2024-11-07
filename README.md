@@ -1,44 +1,100 @@
-# Welcome to SyncNote! 🎉
+# SyncNote - Real-time Collaborative Workspace 🚀
 
+![SyncNote](public/assets/syncnote-screenshot.png)
 
- &nbsp;  
-  
+SyncNote is a powerful real-time collaborative platform designed for seamless text and media sharing. Built with Next.js and Firebase, it offers a robust solution for teams and individuals who need to share and sync content instantly across devices.
 
-![SyncNote Screenshot](public/assets/syncnote-screenshot.png)
+## ✨ Key Features
 
-<div style="text-align: center;">
-  Welcome to SyncNote! 🎉
-</div>
+- **Real-time Synchronization**: Instantly sync text and media across all connected devices
+- **Smart Media Handling**: 
+  - Drag & drop upload
+  - Direct paste support (Ctrl/Cmd + V)
+  - Multiple file uploads
+  - Image preview and full-screen view
+- **Secure Authentication**:
+  - Google Sign-in
+  - Custom authentication system
+- **Responsive Design**: Seamless experience across all devices
+- **Dark Mode Support**: Automatic theme switching based on system preferences
 
+## 🛠 Tech Stack
 
-SyncNote is your go-to real-time collaborative platform for sharing text and media with your friends, colleagues, or that one person who always forgets to save their work. With SyncNote, you can share notes, images, and collaborate in real-time like a pro!
+- **Frontend**: Next.js 15.0
+- **Authentication**: Firebase Auth
+- **Database**: Firebase Firestore
+- **Media Storage**: Cloudinary
+- **Styling**: SCSS Modules
+- **Icons**: React Icons
 
-## Getting Started 🚀
+## 🚀 Getting Started
 
-First things first, let’s get this party started by running the development server:
+1. **Clone the repository**
 
+```bash
+git clone https://github.com/yourusername/syncnote.git
+cd syncnote
+```
+
+2. **Install dependencies**
+```bash
+npm install
+# or
+yarn install
+```
+
+3. **Set up environment variables**
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+NEXT_PUBLIC_CLOUDINARY_API_KEY=your_api_key
+NEXT_PUBLIC_CLOUDINARY_API_SECRET=your_api_secret
+```
+
+4. **Run the development server**
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Once you’ve got that running, open [http://localhost:3000](http://localhost:3000) in your favorite browser. You’ll be greeted with a beautiful interface where the magic happens!
+Visit [http://localhost:3005](http://localhost:3005) to see your app.
 
-## What’s Under the Hood? 🔧
+## 📱 Mobile Support
 
-### APIs You’ll Need
+SyncNote is fully responsive and provides a native-like experience on mobile devices:
+- Optimized media grid layout
+- Touch-friendly interface
+- Adaptive UI components
 
-SyncNote is powered by some cool APIs that make everything work seamlessly:
+## 🔒 Security
 
-- **Firebase Firestore**: We need this API to store and sync your text and media data in real-time.
+- Secure authentication flow
+- Protected API routes
+- Firestore security rules implementation
+- Safe media upload handling
 
-- **Cloudinary**: This is our go-to for all things media. We need the Cloudinary API to set up an unsigned upload preset, allowing you to upload images or simply paste media effortlessly.
+## 🎯 Use Cases
+
+- **Team Collaboration**: Share notes and media in real-time
+- **Personal Workspace**: Sync content across your devices
+- **Project Management**: Keep track of ideas and visual assets
+- **Content Creation**: Organize and share media efficiently
+
+## 📄 License
+
+Copyright © 2024 SyncNote. All rights reserved.
+
+## 💼 Enterprise Support
+
+For enterprise support, custom features, or dedicated hosting, please contact our team at [contact@syncnote.com](mailto:contact@syncnote.com)
 
 ---
 
-So, what are you waiting for? Get started with SyncNote and make collaboration fun and easy! 🎈
+<p align="center">Built with ❤️ by <a href="https://github.com/yourusername">Ash</a></p>
