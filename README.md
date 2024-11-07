@@ -93,7 +93,7 @@ Copyright © 2024 SyncNote. All rights reserved.
 
 ## 💼 Enterprise Support
 
-For enterprise support, custom features, or dedicated hosting, please contact our team at [contact@syncnote.com](mailto:contact@syncnote.com)
+For enterprise support, custom features, or dedicated hosting, please contact our team at [support@devloom.net](mailto:support@devloom.net)
 
 ---
 
