@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fontsource/mynerve": "^5.1.0",
     "@fontsource/poppins": "^5.1.0",
     "cloudinary": "^2.5.1",
     "firebase": "^11.0.1",
