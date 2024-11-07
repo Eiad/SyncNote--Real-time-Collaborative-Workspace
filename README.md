@@ -97,4 +97,4 @@ For enterprise support, custom features, or dedicated hosting, please contact ou
 
 ---
 
-<p align="center">Built with ❤️ by <a href="https://github.com/yourusername">Ash</a></p>
+<p align="center">Built with ❤️ by <a href="https://github.com/Eiad">Ash</a></p>
