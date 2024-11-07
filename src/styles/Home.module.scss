@@ -7,10 +7,8 @@
   width: 100%;
 }
 
-.header {
-  background: white;
-  padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.header {  
+  padding: 1rem;  
   position: sticky;
   top: 0;
   z-index: 10;
@@ -128,9 +126,8 @@
   gap: 20px;
   flex: 1;
   width: 100%;  
-  margin: 0 auto;
-  background: white;
-  border-radius: 1rem;
+  margin: 20px auto 0 auto;
+  background: white;  
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   padding: 2rem;
   
@@ -207,4 +204,118 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+}
+
+.welcomeSection {
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+}
+
+.featureCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.featureCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    color: #1e293b;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+.featureIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b82f6;
+  font-size: 1.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .featureCard {
+    background: #1e293b;
+
+    h3 {
+      color: #f1f5f9;
+    }
+
+    p {
+      color: #94a3b8;
+    }
+  }
+
+  .featureIcon {
+    background: #0f172a;
+    color: #60a5fa;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcomeSection {
+    padding: 1rem;
+  }
+
+  .featureCards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboardFooter {
+  margin-top: auto;
+  padding: 2rem 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.footerContent {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-family: 'Poppins', sans-serif;
+
+  p {
+    margin: 0.25rem 0;
+  }
+}
+
+.developerCredit {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dashboardFooter {
+    border-top-color: #334155;
+  }
+
+  .footerContent {
+    color: #94a3b8;
+  }
+
+  .developerCredit {
+    color: #64748b;
+  }
 }

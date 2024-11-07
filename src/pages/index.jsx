@@ -32,8 +32,11 @@ const Home = () => {
           </div>
         </div>        
       </main>
-      <footer className={styles.footer}>
-        <p>© {new Date().getFullYear()} SyncNote. All rights reserved.</p>
+      <footer className={styles.dashboardFooter}>
+        <div className={styles.footerContent}>
+          <p>© {new Date().getFullYear()} SyncNote. All rights reserved.</p>
+          <p className={styles.developerCredit}>Developed with ❤️ by Ash</p>
+        </div>
       </footer>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { auth } from '@/lib/firebase';
-import { FiLogOut, FiEdit3, FiImage, FiSave, FiTrash2, FiX } from 'react-icons/fi';
+import { FiLogOut, FiEdit3, FiImage, FiSave, FiTrash2, FiX, FiZap } from 'react-icons/fi';
 import TextShare from '@/components/TextShare';
 import MediaShare from '@/components/MediaShare';
 import GlobalLoader from '@/components/GlobalLoader';
@@ -82,10 +82,46 @@ const Dashboard = () => {
             </div>
           </div>
         </header>
+
         <main className={styles.main}>
           <TextShare documentId={`${user.uid}-notes`} />
           <MediaShare documentId={`${user.uid}-media`} />
         </main>
+
+        <div className={styles.welcomeSection}>
+          <div className={styles.featureCards}>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <FiZap />
+              </div>
+              <h3>Real-time Collaboration</h3>
+              <p>Experience seamless real-time updates across all your devices. Log in from anywhere to see your content sync instantly.</p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <FiImage />
+              </div>
+              <h3>Media Sharing</h3>
+              <p>Share images effortlessly. Simply drag & drop, paste, or upload media files. Perfect for visual collaboration.</p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <FiEdit3 />
+              </div>
+              <h3>Text Sync</h3>
+              <p>Write, edit, and share text in real-time. Your notes automatically sync across all devices and collaborators.</p>
+            </div>
+          </div>
+        </div>
+
+        <footer className={styles.dashboardFooter}>
+          <div className={styles.footerContent}>
+            <p>© {new Date().getFullYear()} SyncNote. All rights reserved.</p>
+            <p className={styles.developerCredit}>Developed with ❤️ by Ash</p>
+          </div>
+        </footer>
       </div>
     </>
   );
