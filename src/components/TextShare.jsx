@@ -3,6 +3,7 @@ import { db } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './TextShare.module.scss';
+import { FiTrash2, FiSave } from 'react-icons/fi';
 
 const TextShare = ({ documentId }) => {
   const { user } = useAuth();
@@ -77,20 +78,20 @@ const TextShare = ({ documentId }) => {
       <div className={styles.buttonContainer}>
         <div className={styles.buttonGroup}>
           <button 
-            className={styles.saveButton}
-            onClick={() => handleSave()}
-            disabled={saving || clearing}
-            type="button"
+            onClick={handleClearAndSave}
+            className={styles.clearButton}
+            disabled={!text || loading}
           >
-            {saving ? 'Saving...' : 'Save'}
+            <FiTrash2 className={styles.buttonIcon} />
+            Clear
           </button>
           <button 
-            className={`${styles.clearButton}`}
-            onClick={handleClearAndSave}
-            disabled={saving || clearing || !text}
-            type="button"
+            onClick={handleSave}
+            className={styles.saveButton}
+            disabled={loading}
           >
-            {clearing ? 'Clearing...' : 'Clear'}
+            <FiSave className={styles.buttonIcon} />
+            Save
           </button>
         </div>
       </div>

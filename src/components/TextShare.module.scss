@@ -31,7 +31,11 @@
   }
 }
 
-.saveButton {
+.saveButton, .clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background: #171717;
   color: white;
@@ -50,6 +54,11 @@
   &:disabled {
     background: #94a3b8;
     cursor: not-allowed;
+  }
+
+  .buttonIcon {
+    width: 1.125rem;
+    height: 1.125rem;
   }
 }
 

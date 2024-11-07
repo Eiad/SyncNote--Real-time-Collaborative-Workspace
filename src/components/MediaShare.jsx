@@ -5,6 +5,7 @@ import { CldUploadWidget } from 'next-cloudinary';
 import styles from './MediaShare.module.scss';
 import ImageModal from './ImageModal';
 import { useAuth } from '@/contexts/AuthContext';
+import { FiImage, FiTrash2 } from 'react-icons/fi';
 
 const MediaShare = ({ documentId }) => {
   const { user } = useAuth();
@@ -146,6 +147,7 @@ const MediaShare = ({ documentId }) => {
             onClick={handleDeleteAll}
             disabled={deleting}
           >
+            <FiTrash2 className={styles.buttonIcon} />
             {deleting ? 'Deleting...' : 'Clear'}
           </button>
         )}
@@ -214,6 +216,7 @@ const MediaShare = ({ documentId }) => {
         >
           {({ open }) => (
             <button className={styles.uploadButton} onClick={() => open()}>
+              <FiImage className={styles.buttonIcon} />
               Upload Media
             </button>
           )}

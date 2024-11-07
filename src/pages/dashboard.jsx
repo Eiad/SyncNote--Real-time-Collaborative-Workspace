@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { auth } from '@/lib/firebase';
-import { FiLogOut } from 'react-icons/fi';
+import { FiLogOut, FiEdit3, FiImage, FiSave, FiTrash2, FiX } from 'react-icons/fi';
 import TextShare from '@/components/TextShare';
 import MediaShare from '@/components/MediaShare';
 import styles from '@/styles/Home.module.scss';
