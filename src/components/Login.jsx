@@ -172,7 +172,7 @@ const Login = () => {
               className={`${styles.modeButton} ${loginMode === 'ash' ? styles.activeMode : ''}`}
               onClick={() => setLoginMode('ash')}
             >
-              Ash Login
+              Ash Only
             </button>
             <button
               className={`${styles.modeButton} ${loginMode === 'email' ? styles.activeMode : ''}`}
