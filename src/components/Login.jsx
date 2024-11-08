@@ -33,7 +33,7 @@ const Login = () => {
     setError('');
 
     try {
-      if (ashPassword === 'ashoo') {
+      if (ashPassword === process.env.NEXT_PUBLIC_ASH_PASSWORD) {
         localStorage.setItem('isAshLoggedIn', 'true');
         window.location.href = '/dashboard';
       } else {
