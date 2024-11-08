@@ -1,17 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { auth, googleProvider } from '@/lib/firebase';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { FiLock } from 'react-icons/fi';
+import { auth } from '@/lib/firebase';
+import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { FiMail, FiLock } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import styles from './Login.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
 import GlobalLoader from './GlobalLoader';
+import SignUp from './SignUp';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [ashPassword, setAshPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loginMode, setLoginMode] = useState('email'); // 'ash' or 'email'
+  const [success, setSuccess] = useState('');
   const router = useRouter();
   const { user } = useAuth();
 
@@ -21,71 +27,114 @@ const Login = () => {
     }
   }, [user, router]);
 
-  const withLoadingDelay = async (callback) => {
+  const handleAshLogin = async (e) => {
+    e.preventDefault();
     setLoading(true);
-    const startTime = Date.now();
-    
+    setError('');
+
     try {
-      await callback();
+      if (ashPassword === 'ashoo') {
+        localStorage.setItem('isAshLoggedIn', 'true');
+        window.location.href = '/dashboard';
+      } else {
+        setError('Invalid password');
+      }
+    } catch (error) {
+      setError('Login failed: ' + error.message);
     } finally {
-      const elapsedTime = Date.now() - startTime;
-      const remainingTime = Math.max(1500 - elapsedTime, 0);
-      await new Promise(resolve => setTimeout(resolve, remainingTime));
       setLoading(false);
     }
   };
 
-  const handlePasswordLogin = async (e) => {
+  const handleEmailLogin = async (e) => {
     e.preventDefault();
-    await withLoadingDelay(async () => {
-      try {
-        if (password === 'ashoo') {
-          localStorage.setItem('isAshLoggedIn', 'true');
-          window.location.href = '/dashboard';
-        } else {
-          setError('Invalid password');
-        }
-      } catch (error) {
-        setError('Login failed: ' + error.message);
+    setLoading(true);
+    setError('');
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      if (!userCredential.user.emailVerified) {
+        setError('Please verify your email address before logging in. Check your inbox for the verification link.');
+        await auth.signOut();
+        setLoading(false);
+        return;
       }
-    });
+      
+      router.push('/dashboard');
+    } catch (error) {
+      switch (error.code) {
+        case 'auth/invalid-email':
+          setError('Invalid email address.');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled.');
+          break;
+        case 'auth/user-not-found':
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+          setError('Wrong email or password.');
+          break;
+        default:
+          setError('Failed to login. Please try again.');
+      }
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
-    await withLoadingDelay(async () => {
-      try {
-        setError('');
-        const provider = new GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
-        
-        provider.setCustomParameters({
-          prompt: 'select_account'
-        });
-
-        const result = await signInWithPopup(auth, provider);
-        if (result.user) {
-          router.push('/dashboard');
-        }
-      } catch (error) {
-        console.error('Google Sign In Error:', error);
-        
-        switch (error.code) {
-          case 'auth/unauthorized-domain':
-            setError('This domain is not authorized. Please try again later or contact support.');
-            break;
-          case 'auth/popup-closed-by-user':
-            setError('Sign-in cancelled. Please try again.');
-            break;
-          case 'auth/popup-blocked':
-            setError('Pop-up blocked by browser. Please allow pop-ups for this site.');
-            break;
-          default:
-            setError(`Authentication failed: ${error.message}`);
-        }
+    setLoading(true);
+    setError('');
+    
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        router.push('/dashboard');
       }
-    });
+    } catch (error) {
+      console.error('Google Sign In Error:', error);
+      setError('Failed to sign in with Google: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address first.');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSuccess('Password reset link has been sent to your email.');
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (error) {
+      switch (error.code) {
+        case 'auth/invalid-email':
+          setError('Invalid email address.');
+          break;
+        case 'auth/user-not-found':
+          setError('No account found with this email.');
+          break;
+        default:
+          setError('Failed to send reset email. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isSignUp) {
+    return <SignUp onToggleMode={() => setIsSignUp(false)} />;
+  }
 
   return (
     <>
@@ -97,45 +146,122 @@ const Login = () => {
             <p className={styles.tagline}>Your collaborative workspace</p>
           </div>
 
-          <form onSubmit={handlePasswordLogin} className={styles.form}>
-            <div className={styles.inputGroup}>
-              <FiLock className={styles.inputIcon} />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password for Ash"
-                className={styles.input}
-                disabled={loading}
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              className={styles.primaryButton}
-              disabled={loading}
+          <div className={styles.loginModeToggle}>
+            <button
+              className={`${styles.modeButton} ${loginMode === 'ash' ? styles.activeMode : ''}`}
+              onClick={() => setLoginMode('ash')}
             >
-              Login as Ash
+              Ash Login
             </button>
-          </form>
-
-          <div className={styles.divider}>
-            <span>or continue with</span>
+            <button
+              className={`${styles.modeButton} ${loginMode === 'email' ? styles.activeMode : ''}`}
+              onClick={() => setLoginMode('email')}
+            >
+              Email Login
+            </button>
           </div>
 
-          <button
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className={styles.googleButton}
-          >
-            <FcGoogle />
-            Sign in with Google
-          </button>
-          
-          {error && (
-            <div className={styles.error}>
-              {error}
-            </div>
+          {loginMode === 'ash' ? (
+            <form onSubmit={handleAshLogin} className={styles.form}>
+              <div className={styles.inputGroup}>
+                <FiLock className={styles.inputIcon} />
+                <input
+                  type="password"
+                  value={ashPassword}
+                  onChange={(e) => setAshPassword(e.target.value)}
+                  placeholder="Enter password for Ash"
+                  className={styles.input}
+                  required
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                className={styles.primaryButton}
+                disabled={loading}
+              >
+                Login as Ash
+              </button>
+            </form>
+          ) : (
+            <>
+              <form onSubmit={handleEmailLogin} className={styles.form}>
+                <div className={styles.inputGroup}>
+                  <FiMail className={styles.inputIcon} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                    className={styles.input}
+                    required
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <FiLock className={styles.inputIcon} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    className={styles.input}
+                    required
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  className={styles.primaryButton}
+                  disabled={loading}
+                >
+                  Login
+                </button>
+                <div className={styles.forgotPassword}>
+                  <button 
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className={styles.forgotPasswordButton}
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+
+                {error && (
+                  <div className={styles.error}>
+                    {error}
+                  </div>
+                )}
+
+                {success && (
+                  <div className={styles.success}>
+                    {success}
+                  </div>
+                )}
+              </form>
+
+              <div className={styles.divider}>
+                <span>or continue with</span>
+              </div>
+
+              <button
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className={styles.googleButton}
+              >
+                <FcGoogle />
+                Sign in with Google
+              </button>
+
+              <p className={styles.switchMode}>
+                Don't have an account?{' '}
+                <button 
+                  onClick={() => setIsSignUp(true)} 
+                  className={styles.switchButton}
+                >
+                  Sign Up
+                </button>
+              </p>
+            </>
           )}
         </div>
       </div>
@@ -143,4 +269,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;
