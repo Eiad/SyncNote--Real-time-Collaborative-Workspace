@@ -274,7 +274,7 @@ const Login = () => {
               </button>
 
               <p className={styles.switchMode}>
-                Don't have an account?{' '}
+                Don&#39;t have an account?{' '}
                 <button 
                   onClick={() => setIsSignUp(true)} 
                   className={styles.switchButton}

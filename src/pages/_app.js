@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }) {
     <AuthProvider>
       <ReCaptchaWrapper>
         <Head>
-          <title>SyncNote - Real-time Collaborative Text & Media Sharing</title>
+          <title>SyncNote - Real-time Collaborative Text and Media Sharing</title>
           <meta name="description" content="SyncNote is a real-time collaborative platform for sharing text and media with others." />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
