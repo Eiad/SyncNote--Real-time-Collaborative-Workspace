@@ -1,0 +1,133 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: #f8fafc;
+}
+
+.card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+              0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.logoSection {
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-family: 'Mynerve', cursive;
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.successIcon,
+.errorIcon {
+  width: 48px;
+  height: 48px;
+}
+
+.successIcon {
+  color: #22c55e;
+}
+
+.errorIcon {
+  color: #ef4444;
+}
+
+.redirect {
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.returnButton {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #2563eb;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #0f172a;
+  }
+
+  .card {
+    background: #1e293b;
+  }
+
+  .logo {
+    color: #f1f5f9;
+  }
+
+  .status {
+    h2 {
+      color: #f1f5f9;
+    }
+
+    p {
+      color: #94a3b8;
+    }
+  }
+
+  .spinner {
+    border-color: #334155;
+    border-top-color: #60a5fa;
+  }
+} 

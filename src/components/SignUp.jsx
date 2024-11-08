@@ -62,7 +62,10 @@ const SignUp = ({ onToggleMode }) => {
       const userDocRef = doc(db, 'users', userCredential.user.uid);
       await setDoc(userDocRef, userData);
       
-      await sendEmailVerification(userCredential.user);
+      await sendEmailVerification(userCredential.user, {
+        url: `${window.location.origin}/?verified=true`,
+        handleCodeInApp: true
+      });
       
       await auth.signOut();
       
