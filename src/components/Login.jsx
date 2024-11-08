@@ -8,6 +8,7 @@ import styles from './Login.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
 import GlobalLoader from './GlobalLoader';
 import SignUp from './SignUp';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -20,6 +21,8 @@ const Login = () => {
   const [success, setSuccess] = useState('');
   const router = useRouter();
   const { user } = useAuth();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
     if (user) {
@@ -52,10 +55,28 @@ const Login = () => {
     setError('');
 
     try {
+      if (!isDevelopment) {
+        if (!executeRecaptcha) {
+          throw new Error('reCAPTCHA not initialized');
+        }
+
+        const token = await executeRecaptcha('login');
+        const recaptchaResponse = await fetch('/api/verify-recaptcha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+
+        const recaptchaData = await recaptchaResponse.json();
+        if (!recaptchaData.success || recaptchaData.score < 0.5) {
+          throw new Error('Security check failed. Please try again.');
+        }
+      }
+
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       if (!userCredential.user.emailVerified) {
-        setError('Please verify your email address before logging in. Check your inbox for the verification link.');
+        setError('Please verify your email address before logging in.');
         await auth.signOut();
         setLoading(false);
         return;
@@ -71,13 +92,13 @@ const Login = () => {
           setError('This account has been disabled.');
           break;
         case 'auth/user-not-found':
-        case 'auth/invalid-credential':
         case 'auth/wrong-password':
-          setError('Wrong email or password.');
+          setError('Invalid email or password.');
           break;
         default:
-          setError('Failed to login. Please try again.');
+          setError(error.message);
       }
+    } finally {
       setLoading(false);
     }
   };

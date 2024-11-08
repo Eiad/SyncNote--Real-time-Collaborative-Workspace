@@ -6,6 +6,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { FiMail, FiLock, FiUser } from 'react-icons/fi';
 import styles from './Login.module.scss';
 import GlobalLoader from './GlobalLoader';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const SignUp = ({ onToggleMode }) => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,8 @@ const SignUp = ({ onToggleMode }) => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -23,6 +26,24 @@ const SignUp = ({ onToggleMode }) => {
     setSuccess('');
 
     try {
+      if (!isDevelopment) {
+        if (!executeRecaptcha) {
+          throw new Error('reCAPTCHA not initialized');
+        }
+
+        const token = await executeRecaptcha('signup');
+        const recaptchaResponse = await fetch('/api/verify-recaptcha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+
+        const recaptchaData = await recaptchaResponse.json();
+        if (!recaptchaData.success || recaptchaData.score < 0.5) {
+          throw new Error('Security check failed. Please try again.');
+        }
+      }
+
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, {
         displayName: name
