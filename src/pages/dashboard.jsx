@@ -56,8 +56,7 @@ const Dashboard = () => {
             <h1 className={styles.syncNote}>SyncNote</h1>
             
             <div className={styles.userSection}>
-              <div className={styles.userInfo}>
-                <span className={styles.welcomeText}>Welcome,</span>
+              <div className={styles.userInfo}>                
                 <span className={styles.userName}>{user.displayName}</span>
               </div>
               

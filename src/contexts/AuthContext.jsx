@@ -17,7 +17,8 @@ export function AuthProvider({ children }) {
         setUser({ 
           uid: 'ash',
           displayName: 'Ash',
-          email: 'ash@example.com'
+          email: 'ash@i-ash.com',
+          photoURL: '/assets/ash-avatar.jpg'
         });
         setLoading(false);
         return;
@@ -26,7 +27,12 @@ export function AuthProvider({ children }) {
       if (user) {
         // Check if user is verified or is a Google user
         if (user.emailVerified || user.providerData[0].providerId === 'google.com') {
-          setUser(user);
+          // Set default avatar if no photoURL exists
+          const userWithDefaultAvatar = {
+            ...user,
+            photoURL: user.photoURL || '/assets/default-avatar.jpg'
+          };
+          setUser(userWithDefaultAvatar);
         } else {
           // If not verified, sign them out
           await auth.signOut();

@@ -46,7 +46,8 @@ const SignUp = ({ onToggleMode }) => {
 
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, {
-        displayName: name
+        displayName: name,
+        photoURL: '/assets/default-avatar.jpg'
       });
       
       const userData = {
@@ -54,7 +55,8 @@ const SignUp = ({ onToggleMode }) => {
         email: email,
         createdAt: new Date().toISOString(),
         provider: 'email',
-        uid: userCredential.user.uid
+        uid: userCredential.user.uid,
+        photoURL: '/assets/default-avatar.jpg'
       };
 
       const userDocRef = doc(db, 'users', userCredential.user.uid);
