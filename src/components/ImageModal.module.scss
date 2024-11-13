@@ -16,8 +16,7 @@
   position: relative;
   max-width: 90vw;
   max-height: 90vh;
-  border-radius: 0.5rem;
-  overflow: hidden;
+  border-radius: 0.5rem;  
 }
 
 .image {
@@ -29,10 +28,10 @@
 
 .closeButton {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  top: -10px;
+  right: -10px;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
   border: 2px solid white;
