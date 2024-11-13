@@ -4,7 +4,7 @@
   overflow: hidden;
   transition: all 0.3s ease;
   margin-bottom: 2rem;
-  width: 65%;
+  flex: 1;
 
   @media (max-width: 768px) {
     width: 100%;

@@ -1,9 +1,14 @@
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+import { useRouter } from 'next/router';
 
 export function ReCaptchaWrapper({ children }) {
+  const router = useRouter();
   const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  // Only show reCAPTCHA on login/signup pages
+  const shouldShowRecaptcha = router.pathname === '/' || router.pathname === '/signup';
 
-  if (isDevelopment) {
+  if (isDevelopment || !shouldShowRecaptcha) {
     return children;
   }
 
