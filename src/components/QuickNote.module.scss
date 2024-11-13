@@ -17,13 +17,14 @@
   width: 100%;
   min-height: 300px;
   padding: 1.25rem;
-  border: 1px solid #FFF8B0;  
+  border: 1px solid #e2e8f0;  
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   resize: vertical;
   transition: all 0.3s ease;
-  background: #FFF8B0;
-  color: #000000;
+  background: #fefcbf;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #171717;
   
   &:focus {
     outline: none;
