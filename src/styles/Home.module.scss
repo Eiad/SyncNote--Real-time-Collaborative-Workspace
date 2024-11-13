@@ -123,6 +123,7 @@
 
 .main {
   display: flex;
+  flex-direction: column;
   gap: 20px;
   flex: 1;
   width: 100%;  
@@ -132,7 +133,7 @@
   padding: 2rem;
   
   @media (max-width: 768px) {
-    flex-direction: column;
+    padding: 1rem;
   }
 }
 
@@ -317,5 +318,15 @@
 
   .developerCredit {
     color: #64748b;
+  }
+}
+
+.textareaContainer {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 }

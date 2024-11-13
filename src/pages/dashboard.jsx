@@ -6,6 +6,7 @@ import { FiLogOut, FiEdit3, FiImage, FiSave, FiTrash2, FiX, FiZap } from 'react-
 import TextShare from '@/components/TextShare';
 import MediaShare from '@/components/MediaShare';
 import GlobalLoader from '@/components/GlobalLoader';
+import QuickNote from '@/components/QuickNote';
 import styles from '@/styles/Home.module.scss';
 
 const Dashboard = () => {
@@ -83,7 +84,10 @@ const Dashboard = () => {
         </header>
 
         <main className={styles.main}>
-          <TextShare documentId={`${user.uid}-notes`} />
+          <div className={styles.textareaContainer}>
+            <QuickNote documentId={`${user.uid}-quicknotes`} />
+            <TextShare documentId={`${user.uid}-notes`} />
+          </div>
           <MediaShare documentId={`${user.uid}-media`} />
         </main>
 
