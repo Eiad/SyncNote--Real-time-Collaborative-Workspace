@@ -334,3 +334,29 @@
     flex-direction: column;
   }
 }
+
+.tabContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.tabButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #f1f5f9;
+  color: #1e293b;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+
+  &:hover {
+    background: #326ed0;
+    color: white;
+  }
+}
+
+.activeTab {
+  background: #3b82f6;
+  color: white;
+}

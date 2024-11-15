@@ -14,6 +14,7 @@ const Dashboard = () => {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [activeTab, setActiveTab] = useState('media'); // Default to media share
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -56,12 +57,10 @@ const Dashboard = () => {
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <h1 className={styles.syncNote}>SyncNote</h1>
-            
             <div className={styles.userSection}>
               <div className={styles.userInfo}>                
                 <span className={styles.userName}>{user.displayName}</span>
               </div>
-              
               {user.photoURL && (
                 <div className={styles.avatarContainer}>
                   <img 
@@ -71,7 +70,6 @@ const Dashboard = () => {
                   />
                 </div>
               )}
-              
               <button 
                 onClick={handleLogout}
                 className={styles.logoutButton}
@@ -83,16 +81,32 @@ const Dashboard = () => {
             </div>
           </div>
         </header>
-
         <main className={styles.main}>
           <div className={styles.textareaContainer}>
             <QuickNote documentId={`${user.uid}-quicknotes`} />
             <TextShare documentId={`${user.uid}-notes`} />
           </div>
-          <MediaShare documentId={`${user.uid}-media`} />
-          <FileShare documentId={`${user.uid}-files`} />
+          {user.displayName === 'Ash' && (
+          <div className={styles.tabContainer}>
+            <button 
+              className={`${styles.tabButton} ${activeTab === 'media' ? styles.activeTab : ''}`} 
+              onClick={() => setActiveTab('media')}
+            >
+              Media Share
+            </button>            
+            
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'files' ? styles.activeTab : ''}`} 
+                onClick={() => setActiveTab('files')}
+              >
+                File Share
+              </button>
+            
+          </div>
+        )}
+          {activeTab === 'media' && <MediaShare documentId={`${user.uid}-media`} />}
+          {activeTab === 'files' && <FileShare documentId={`${user.uid}-files`} />}
         </main>
-
         <div className={styles.welcomeSection}>
           <div className={styles.featureCards}>
             <div className={styles.featureCard}>
@@ -102,7 +116,6 @@ const Dashboard = () => {
               <h3>Real-time Collaboration</h3>
               <p>Experience seamless real-time updates across all your devices. Log in from anywhere to see your content sync instantly.</p>
             </div>
-
             <div className={styles.featureCard}>
               <div className={styles.featureIcon}>
                 <FiImage />
@@ -110,7 +123,6 @@ const Dashboard = () => {
               <h3>Media Sharing</h3>
               <p>Share images effortlessly. Simply drag & drop, paste, or upload media files. Perfect for visual collaboration.</p>
             </div>
-
             <div className={styles.featureCard}>
               <div className={styles.featureIcon}>
                 <FiEdit3 />
@@ -120,7 +132,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
         <footer className={styles.dashboardFooter}>
           <div className={styles.footerContent}>
             <p>© {new Date().getFullYear()} SyncNote. All rights reserved.</p>
