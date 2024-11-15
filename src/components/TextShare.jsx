@@ -73,6 +73,7 @@ const TextShare = ({ documentId }) => {
 
   return (
     <div className={styles.container}>
+      <h3 className={styles.title}>Frequently Shared Text</h3>
       <textarea
         className={styles.textarea}
         value={text}

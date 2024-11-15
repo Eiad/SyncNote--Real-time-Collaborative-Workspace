@@ -73,6 +73,7 @@ const QuickNote = ({ documentId }) => {
 
   return (
     <div className={styles.container}>
+      <h3 className={styles.title}>Quick Note</h3>
       <textarea
         className={styles.textarea}
         value={text}
