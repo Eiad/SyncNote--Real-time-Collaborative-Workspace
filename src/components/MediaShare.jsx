@@ -65,9 +65,9 @@ const MediaShare = ({ documentId }) => {
 
   useEffect(() => {
     if (!user) return;
-    
+
     const docRef = doc(db, `users/${user.uid}/media`, documentId);
-    
+
     const unsubscribe = onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
         setMediaUrls(doc.data().urls || []);
@@ -83,7 +83,7 @@ const MediaShare = ({ documentId }) => {
       const docRef = doc(db, `users/${user.uid}/media`, documentId);
       const docSnap = await getDoc(docRef);
       const currentUrls = docSnap.exists() ? docSnap.data().urls || [] : [];
-      
+
       await setDoc(docRef, {
         urls: [...currentUrls, imageUrl]
       }, { merge: true });
@@ -129,7 +129,7 @@ const MediaShare = ({ documentId }) => {
       // Clear Firebase storage
       const docRef = doc(db, `users/${user.uid}/media`, documentId);
       await setDoc(docRef, { urls: [] }, { merge: true });
-      
+
     } catch (err) {
       setError('Error deleting images: ' + err.message);
     } finally {
@@ -139,10 +139,10 @@ const MediaShare = ({ documentId }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>Media Sharing</h2>
-        {mediaUrls.length > 0 && (
-          <button 
+      {mediaUrls.length > 0 && (
+        <div className={styles.header}>
+
+          <button
             className={styles.deleteButton}
             onClick={handleDeleteAll}
             disabled={deleting}
@@ -150,8 +150,9 @@ const MediaShare = ({ documentId }) => {
             <FiTrash2 className={styles.buttonIcon} />
             {deleting ? 'Deleting...' : 'Clear'}
           </button>
-        )}
-      </div>
+
+        </div>
+      )}
 
       {pasteLoading && (
         <div className={styles.loading}>
@@ -161,8 +162,8 @@ const MediaShare = ({ documentId }) => {
 
       <div className={styles.imageGrid}>
         {mediaUrls.map((url, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={styles.imageWrapper}
             onClick={() => setSelectedImage(url)}
           >
@@ -174,12 +175,12 @@ const MediaShare = ({ documentId }) => {
         ))}
       </div>
       {selectedImage && (
-        <ImageModal 
-          imageUrl={selectedImage} 
-          onClose={() => setSelectedImage(null)} 
+        <ImageModal
+          imageUrl={selectedImage}
+          onClose={() => setSelectedImage(null)}
         />
       )}
-      
+
       <div className={styles.uploadButtonContainer}>
         <CldUploadWidget
           cloudName="drkarc7oe"
@@ -222,7 +223,7 @@ const MediaShare = ({ documentId }) => {
           )}
         </CldUploadWidget>
       </div>
-      
+
       {loading && <div className={styles.loading}>Uploading media...</div>}
       {error && <div className={styles.error}>{error}</div>}
       <div className={styles.instructions}>

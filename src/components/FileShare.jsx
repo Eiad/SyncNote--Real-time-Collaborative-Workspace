@@ -66,8 +66,7 @@ const FileShare = ({ documentId }) => {
         <>
             {user?.displayName === 'Ash' && (
                 <div className={styles.container}>
-                    <div className={styles.header}>
-                        <h2>Files Sharing</h2>
+                    <div className={styles.header}>                        
                         {fileData.length > 0 && (
                             <button
                                 className={styles.deleteButton}
