@@ -7,6 +7,7 @@ import TextShare from '@/components/TextShare';
 import MediaShare from '@/components/MediaShare';
 import GlobalLoader from '@/components/GlobalLoader';
 import QuickNote from '@/components/QuickNote';
+import FileShare from '@/components/FileShare';
 import styles from '@/styles/Home.module.scss';
 
 const Dashboard = () => {
@@ -89,6 +90,7 @@ const Dashboard = () => {
             <TextShare documentId={`${user.uid}-notes`} />
           </div>
           <MediaShare documentId={`${user.uid}-media`} />
+          <FileShare documentId={`${user.uid}-files`} />
         </main>
 
         <div className={styles.welcomeSection}>
