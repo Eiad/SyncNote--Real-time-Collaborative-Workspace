@@ -6,7 +6,10 @@
 
 &nbsp;
 &nbsp;
-<img src="public/assets/syncnote-screenshot.png" alt="SyncNote" width="600"/>
+
+<div align="center">
+  <img src="public/assets/syncnote-screenshot.png" alt="SyncNote" width="800" style="margin: 40px 0;">
+</div>
 
 SyncNote is a powerful real-time collaborative platform designed for seamless text and media sharing. Built with Next.js and Firebase, it offers a robust solution for teams and individuals who need to share and sync content instantly across devices.
 
