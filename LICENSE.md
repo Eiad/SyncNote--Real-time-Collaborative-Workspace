@@ -1,6 +1,6 @@
 # SyncNote License
 
-Copyright (c) 2024 SyncNote
+Copyright (c) 2025 SyncNote
 
 ## Terms of Use
 
