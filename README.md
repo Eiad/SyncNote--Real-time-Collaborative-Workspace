@@ -1,8 +1,10 @@
 # SyncNote - Real-time Collaborative Workspace 🚀
 
-![SyncNote](public/assets/syncnote-screenshot.png)
+
 
 > 🌟 **Try SyncNote now at [syncnote.devloom.net](https://syncnote.devloom.net)** 🌟
+
+<img src="public/assets/syncnote-screenshot.png" alt="SyncNote" width="600"/>
 
 SyncNote is a powerful real-time collaborative platform designed for seamless text and media sharing. Built with Next.js and Firebase, it offers a robust solution for teams and individuals who need to share and sync content instantly across devices.
 
