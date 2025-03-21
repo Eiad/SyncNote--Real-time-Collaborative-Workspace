@@ -144,20 +144,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .container {
-    background: #1e293b;
-  }
-  
-  .textarea {
-    border-color: #334155;
-    
-    &:focus {
-      border-color: #3b82f6;
-    }
-  }
-}
-
 @media (max-width: 640px) {
   .buttonGroup {
     width: 100%;

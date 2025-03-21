@@ -150,55 +150,6 @@
   text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  .loginContainer {
-    background: #0f172a;
-  }
-  
-  .loginCard {
-    background: #1e293b;
-  }
-  
-  .logo {
-    color: #f1f5f9;
-  }
-  
-  .input {
-    background: #1e293b;
-    border-color: #334155;
-    color: #f1f5f9;
-    
-    &::placeholder {
-      color: #64748b;
-    }
-    
-    &:focus {
-      border-color: #60a5fa;
-    }
-  }
-  
-  .googleButton {
-    background: #1e293b;
-    border-color: #334155;
-    color: #f1f5f9;
-    
-    &:hover:not(:disabled) {
-      background: #334155;
-    }
-  }
-  
-  .divider {
-    span {
-      background: #1e293b;
-      color: #64748b;
-    }
-    
-    &::before {
-      background: #334155;
-    }
-  }
-}
-
 .switchMode {
   text-align: center;
   margin-top: 1.5rem;
@@ -229,20 +180,6 @@
     color: #1e293b;
     font-size: 1.5rem;
     font-weight: 600;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .formContainer h2 {
-    color: #f1f5f9;
-  }
-  
-  .switchMode {
-    color: #94a3b8;
-  }
-  
-  .switchButton {
-    color: #60a5fa;
   }
 }
 
@@ -278,37 +215,12 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .loginModeToggle {
-    background: #334155;
-  }
-
-  .modeButton {
-    color: #94a3b8;
-
-    &:hover {
-      color: #f1f5f9;
-    }
-
-    &.activeMode {
-      background: #1e293b;
-      color: #f1f5f9;
-    }
-  }
-}
-
 .formTitle {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #1e293b;
   font-size: 1.5rem;
   font-weight: 600;
-}
-
-@media (prefers-color-scheme: dark) {
-  .formTitle {
-    color: #f1f5f9;
-  }
 }
 
 .success {
@@ -319,13 +231,6 @@
   background-color: #dcfce7;
   color: #166534;
   font-size: 0.875rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .success {
-    background-color: #064e3b;
-    color: #a7f3d0;
-  }
 }
 
 .forgotPassword {
@@ -343,11 +248,5 @@
   
   &:hover {
     text-decoration: underline;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .forgotPasswordButton {
-    color: #60a5fa;
   }
 }

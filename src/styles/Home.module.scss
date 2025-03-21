@@ -163,12 +163,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .main {
-    background: #1e293b;
-  }
-}
-
 .globalLoading,
 .globalError {
   position: fixed;
@@ -260,25 +254,6 @@
   font-size: 1.25rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .featureCard {
-    background: #1e293b;
-
-    h3 {
-      color: #f1f5f9;
-    }
-
-    p {
-      color: #94a3b8;
-    }
-  }
-
-  .featureIcon {
-    background: #0f172a;
-    color: #60a5fa;
-  }
-}
-
 @media (max-width: 768px) {
   .welcomeSection {
     padding: 1rem;
@@ -309,20 +284,6 @@
 .developerCredit {
   color: #94a3b8;
   font-size: 0.75rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .dashboardFooter {
-    border-top-color: #334155;
-  }
-
-  .footerContent {
-    color: #94a3b8;
-  }
-
-  .developerCredit {
-    color: #64748b;
-  }
 }
 
 .textareaContainer {
