@@ -65,17 +65,3 @@
     opacity: 1;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .loaderContent {
-    background: #1e293b;
-    
-    span {
-      color: #f1f5f9;
-    }
-    
-    .spinnerIcon {
-      color: #e2e8f0;
-    }
-  }
-}
