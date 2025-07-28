@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getAnalytics, logEvent } from 'firebase/analytics';
+import { getAnalytics, logEvent, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 
 // Firebase configuration object containing all necessary credentials
 // These are loaded from environment variables for security
@@ -26,7 +26,44 @@ export const googleProvider = new GoogleAuthProvider();
 // Analytics requires browser APIs that aren't available during server-side rendering
 let analytics = null;
 if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+  try {
+    analytics = getAnalytics(app);
+    console.log('✅ Firebase Analytics initialized successfully');
+    
+    // Enable analytics collection
+    setAnalyticsCollectionEnabled(analytics, true);
+    
+    // Enable debug mode for immediate DebugView visibility
+    if (process.env.NODE_ENV === 'development') {
+      // Add debug parameter to URL for Firebase Analytics debug mode
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.has('debug')) {
+        urlParams.set('debug', '1');
+        const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+    
+    // Test analytics immediately to verify it's working
+    setTimeout(() => {
+      logEvent(analytics, 'analytics_test', {
+        test_param: 'initialization_test',
+        timestamp: Date.now()
+      });
+      console.log('🧪 Analytics test event sent');
+      
+      // Send a page_view event which is more likely to show in DebugView
+      logEvent(analytics, 'page_view', {
+        page_title: 'SyncNote Dashboard',
+        page_location: window.location.href
+      });
+      console.log('📄 Page view event sent');
+      
+    }, 1000);
+    
+  } catch (error) {
+    console.error('❌ Firebase Analytics initialization failed:', error);
+  }
 }
 
 /**
@@ -65,8 +102,22 @@ if (typeof window !== 'undefined') {
  * - logAnalyticsEvent('media_upload_success', { file_size: 1024000, file_format: 'jpg' })
  */
 export const logAnalyticsEvent = (eventName, parameters = {}) => {
+  // Debug logging to help identify issues
+  console.log('📊 Analytics Event:', eventName, parameters);
+  
   // Only log events on client side and when analytics is available
-  if (analytics && typeof window !== 'undefined') {
-    logEvent(analytics, eventName, parameters);
+  if (typeof window !== 'undefined') {
+    if (analytics) {
+      try {
+        logEvent(analytics, eventName, parameters);
+        console.log('✅ Analytics event logged successfully:', eventName);
+      } catch (error) {
+        console.error('❌ Failed to log analytics event:', eventName, error);
+      }
+    } else {
+      console.warn('⚠️ Analytics not initialized, skipping event:', eventName);
+    }
+  } else {
+    console.log('🔄 Server-side rendering, skipping analytics event:', eventName);
   }
 };

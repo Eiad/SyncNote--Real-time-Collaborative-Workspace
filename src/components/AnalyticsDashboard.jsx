@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './AnalyticsDashboard.module.scss';
-import { FiBarChart, FiUsers, FiActivity, FiTrendingUp } from 'react-icons/fi';
 
 /**
  * Analytics Dashboard Component
@@ -9,18 +8,6 @@ import { FiBarChart, FiUsers, FiActivity, FiTrendingUp } from 'react-icons/fi';
  * This component provides a floating analytics dashboard that's only visible to the "Ash" user.
  * It serves as a development/testing tool to help understand what analytics events are available
  * and how to test them in the Firebase Console.
- * 
- * Features:
- * - Shows all available analytics events organized by category
- * - Provides descriptions of what each event tracks
- * - Includes testing instructions for Firebase Console
- * - Only visible to admin user (Ash) for security
- * 
- * Event Categories:
- * - Authentication Events: Login, signup, password reset tracking
- * - Dashboard Events: Navigation and access patterns
- * - Text Operations: Content creation and editing behavior
- * - Media Operations: File upload, view, and deletion patterns
  */
 const AnalyticsDashboard = () => {
   const { user } = useAuth();
@@ -46,8 +33,7 @@ const AnalyticsDashboard = () => {
         onClick={toggleVisibility}
         className={styles.toggleButton}
       >
-        <FiBarChart />
-        Analytics
+        📊 Analytics
       </button>
       
       {/* Analytics Dashboard Panel */}
@@ -90,6 +76,11 @@ const AnalyticsDashboard = () => {
                 <li><code>text_edited</code> - Significant text changes</li>
                 <li><code>text_load_error</code> - Error loading text</li>
                 <li><code>text_save_error</code> - Error saving text</li>
+                <li><code>quicknote_saved</code> - Quick note saved</li>
+                <li><code>quicknote_cleared</code> - Quick note cleared</li>
+                <li><code>quicknote_edited</code> - Quick note text changes</li>
+                <li><code>quicknote_load_error</code> - Error loading quick note</li>
+                <li><code>quicknote_save_error</code> - Error saving quick note</li>
               </ul>
             </div>
             

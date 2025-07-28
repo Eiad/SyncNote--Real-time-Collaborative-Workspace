@@ -18,6 +18,17 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('media'); // Default to media share
 
   /**
+   * Test analytics function for debugging
+   */
+  const testAnalytics = () => {
+    console.log('🧪 Testing analytics...');
+    logAnalyticsEvent('test_event', {
+      test_param: 'test_value',
+      timestamp: Date.now()
+    });
+  };
+
+  /**
    * Track when user accesses the dashboard
    * This event helps understand user engagement and session patterns
    * Fires once per dashboard access, not on every render
@@ -37,6 +48,7 @@ const Dashboard = () => {
    * Tracks logout success, errors, and session duration
    */
   const handleLogout = async () => {
+    console.log('🚪 Logout attempt started...');
     setLoggingOut(true);
     const startTime = Date.now(); // Track session duration
     
@@ -48,6 +60,7 @@ const Dashboard = () => {
     });
     
     try {
+      console.log('🔐 Signing out from Firebase...');
       await auth.signOut();
       localStorage.removeItem('isAshLoggedIn');
       
@@ -56,8 +69,10 @@ const Dashboard = () => {
       const remainingTime = Math.max(1500 - elapsedTime, 0);
       await new Promise(resolve => setTimeout(resolve, remainingTime));
       
+      console.log('🏠 Redirecting to home...');
       window.location.href = '/';
     } catch (error) {
+      console.log('💥 Logout error:', error);
       console.error('Logout failed:', error);
       
       // Track logout errors to identify authentication issues
@@ -192,6 +207,68 @@ const Dashboard = () => {
       
       {/* Analytics Dashboard - Only visible to Ash for testing and monitoring */}
       <AnalyticsDashboard />
+      
+      {/* Test Analytics Button - Only for Ash */}
+      {user.displayName === 'Ash' && (
+        <div style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '20px',
+          background: '#ff6b6b',
+          color: 'white',
+          border: 'none',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          zIndex: 1000
+        }}>
+          <button 
+            onClick={testAnalytics}
+            style={{
+              background: 'transparent',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+              marginBottom: '5px'
+            }}
+          >
+            🧪 Test Analytics
+          </button>
+          <button 
+            onClick={() => {
+              logAnalyticsEvent('debug_event', {
+                debug_param: 'manual_test',
+                timestamp: Date.now()
+              });
+            }}
+            style={{
+              background: 'transparent',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+              marginBottom: '5px'
+            }}
+          >
+            🔍 Debug Event
+          </button>
+          <button 
+            onClick={() => {
+              logAnalyticsEvent('page_view', {
+                page_title: 'Manual Page View',
+                page_location: window.location.href
+              });
+            }}
+            style={{
+              background: 'transparent',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            📄 Page View
+          </button>
+        </div>
+      )}
     </>
   );
 };
