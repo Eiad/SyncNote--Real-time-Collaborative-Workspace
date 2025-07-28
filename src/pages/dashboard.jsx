@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
-import { auth } from '@/lib/firebase';
+import { auth, logAnalyticsEvent } from '@/lib/firebase';
 import { FiLogOut, FiEdit3, FiImage, FiSave, FiTrash2, FiX, FiZap } from 'react-icons/fi';
 import TextShare from '@/components/TextShare';
 import MediaShare from '@/components/MediaShare';
 import GlobalLoader from '@/components/GlobalLoader';
 import QuickNote from '@/components/QuickNote';
 import FileShare from '@/components/FileShare';
+import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 import styles from '@/styles/Home.module.scss';
 
 const Dashboard = () => {
@@ -16,14 +17,41 @@ const Dashboard = () => {
   const [loggingOut, setLoggingOut] = useState(false);
   const [activeTab, setActiveTab] = useState('media'); // Default to media share
 
+  /**
+   * Track when user accesses the dashboard
+   * This event helps understand user engagement and session patterns
+   * Fires once per dashboard access, not on every render
+   */
+  useEffect(() => {
+    if (user && !authLoading) {
+      logAnalyticsEvent('dashboard_accessed', {
+        user_id: user.uid,                    // Unique user identifier for tracking
+        user_email: user.email,               // User's email for demographic analysis
+        user_display_name: user.displayName   // Display name for user identification
+      });
+    }
+  }, [user, authLoading]);
+
+  /**
+   * Handle user logout with comprehensive analytics tracking
+   * Tracks logout success, errors, and session duration
+   */
   const handleLogout = async () => {
     setLoggingOut(true);
-    const startTime = Date.now();
+    const startTime = Date.now(); // Track session duration
+    
+    // Track logout attempt with session duration
+    logAnalyticsEvent('user_logout', {
+      user_id: user?.uid,                    // User identifier
+      user_email: user?.email,               // User email
+      session_duration: Date.now() - startTime // How long user was logged in
+    });
     
     try {
       await auth.signOut();
       localStorage.removeItem('isAshLoggedIn');
       
+      // Ensure minimum loading time for better UX
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(1500 - elapsedTime, 0);
       await new Promise(resolve => setTimeout(resolve, remainingTime));
@@ -31,11 +59,33 @@ const Dashboard = () => {
       window.location.href = '/';
     } catch (error) {
       console.error('Logout failed:', error);
+      
+      // Track logout errors to identify authentication issues
+      logAnalyticsEvent('logout_error', {
+        error_message: error.message,         // Specific error message
+        user_id: user?.uid                    // User identifier for debugging
+      });
     } finally {
       setLoggingOut(false);
     }
   };
 
+  /**
+   * Handle tab switching with analytics tracking
+   * Helps understand which features users prefer and navigation patterns
+   */
+  const handleTabSwitch = (tabName) => {
+    setActiveTab(tabName);
+    
+    // Track tab switching to understand user preferences
+    logAnalyticsEvent('tab_switched', {
+      from_tab: activeTab,                   // Previous tab (e.g., 'media', 'files')
+      to_tab: tabName,                       // New tab user switched to
+      user_id: user?.uid                     // User identifier for personalization
+    });
+  };
+
+  // Redirect to home if user is not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/');
@@ -90,14 +140,14 @@ const Dashboard = () => {
           <div className={styles.tabContainer}>
             <button 
               className={`${styles.tabButton} ${activeTab === 'media' ? styles.activeTab : ''}`} 
-              onClick={() => setActiveTab('media')}
+              onClick={() => handleTabSwitch('media')}
             >
               Media Share
             </button>            
             
               <button 
                 className={`${styles.tabButton} ${activeTab === 'files' ? styles.activeTab : ''}`} 
-                onClick={() => setActiveTab('files')}
+                onClick={() => handleTabSwitch('files')}
               >
                 File Share
               </button>
@@ -139,6 +189,9 @@ const Dashboard = () => {
           </div>
         </footer>
       </div>
+      
+      {/* Analytics Dashboard - Only visible to Ash for testing and monitoring */}
+      <AnalyticsDashboard />
     </>
   );
 };

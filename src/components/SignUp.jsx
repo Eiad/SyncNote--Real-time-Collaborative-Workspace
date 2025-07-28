@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { auth, db } from '@/lib/firebase';
+import { auth, db, logAnalyticsEvent } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { FiMail, FiLock, FiUser } from 'react-icons/fi';
@@ -19,13 +19,24 @@ const SignUp = ({ onToggleMode }) => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const isDevelopment = process.env.NODE_ENV === 'development';
 
+  /**
+   * Handle user signup with comprehensive analytics tracking
+   * Tracks signup attempts, success, failures, and user creation
+   */
   const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
 
+    // Track signup attempts for conversion analysis
+    logAnalyticsEvent('signup_attempted', {
+      user_email: email,                      // User's email address
+      user_name: name                         // User's display name
+    });
+
     try {
+      // Verify reCAPTCHA in production for security
       if (!isDevelopment) {
         if (!executeRecaptcha) {
           throw new Error('reCAPTCHA not initialized');
@@ -44,12 +55,16 @@ const SignUp = ({ onToggleMode }) => {
         }
       }
 
+      // Create user account with Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update user profile with display name and default avatar
       await updateProfile(userCredential.user, {
         displayName: name,
         photoURL: '/assets/default-avatar.jpg'
       });
       
+      // Prepare user data for Firestore storage
       const userData = {
         name: name,
         email: email,
@@ -59,37 +74,72 @@ const SignUp = ({ onToggleMode }) => {
         photoURL: '/assets/default-avatar.jpg'
       };
 
+      // Store user data in Firestore
       const userDocRef = doc(db, 'users', userCredential.user.uid);
       await setDoc(userDocRef, userData);
       
+      // Send email verification
       await sendEmailVerification(userCredential.user, {
         url: `${window.location.origin}/?verified=true`,
         handleCodeInApp: true
       });
       
+      // Sign out user to require email verification
       await auth.signOut();
+      
+      // Track successful signup for user acquisition analysis
+      logAnalyticsEvent('signup_success', {
+        user_email: email,                    // User's email address
+        user_name: name,                      // User's display name
+        user_id: userCredential.user.uid,     // User's unique identifier
+        signup_method: 'email'                // Signup method used
+      });
       
       setSuccess('Account created! Please check your email to verify your account before logging in.');
       setTimeout(() => {
         onToggleMode();
       }, 3000);
     } catch (error) {
+      let errorType = 'unknown';
       switch (error.code) {
         case 'auth/email-already-in-use':
           setError('This email is already registered. Please login instead.');
+          errorType = 'email_already_in_use';
           break;
         case 'auth/invalid-email':
           setError('Invalid email address.');
+          errorType = 'invalid_email';
           break;
         case 'auth/weak-password':
           setError('Password should be at least 6 characters.');
+          errorType = 'weak_password';
           break;
         default:
           setError('Failed to create account: ' + error.message);
+          errorType = 'other';
       }
+      
+      // Track failed signup attempts for conversion optimization
+      logAnalyticsEvent('signup_failed', {
+        error_type: errorType,                // Type of signup failure
+        error_code: error.code,               // Firebase error code
+        user_email: email,                    // User's email address
+        user_name: name                       // User's display name
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Handle navigation back to login page with analytics tracking
+   * Tracks user behavior when switching between signup and login
+   */
+  const handleBackToLogin = () => {
+    onToggleMode();
+    
+    // Track navigation back to login for user flow analysis
+    logAnalyticsEvent('signup_back_to_login');
   };
 
   return (
@@ -164,7 +214,7 @@ const SignUp = ({ onToggleMode }) => {
 
           <p className={styles.switchMode}>
             Already have an account?{' '}
-            <button onClick={onToggleMode} className={styles.switchButton}>
+            <button onClick={handleBackToLogin} className={styles.switchButton}>
               Login
             </button>
           </p>

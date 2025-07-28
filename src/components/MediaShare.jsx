@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { db } from '@/lib/firebase';
+import { db, logAnalyticsEvent } from '@/lib/firebase';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import { CldUploadWidget } from 'next-cloudinary';
 import styles from './MediaShare.module.scss';
@@ -16,6 +16,11 @@ const MediaShare = ({ documentId }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [pasteLoading, setPasteLoading] = useState(false);
 
+  /**
+   * Handle paste operations for image uploads
+   * Tracks paste upload attempts, success, and errors
+   * Supports drag-and-drop and clipboard paste functionality
+   */
   const handlePaste = useCallback(async (event) => {
     const items = event.clipboardData?.items;
     if (!items || !user) return;
@@ -28,6 +33,14 @@ const MediaShare = ({ documentId }) => {
         setPasteLoading(true);
         const formData = new FormData();
         formData.append('file', file);
+
+        // Track paste upload attempts to understand user behavior
+        logAnalyticsEvent('media_paste_upload_started', {
+          file_size: file.size,               // File size in bytes for performance analysis
+          file_type: file.type,               // MIME type (e.g., 'image/jpeg')
+          user_id: user.uid,                  // User identifier
+          document_id: documentId             // Which document receives the upload
+        });
 
         try {
           const response = await fetch('/api/uploadImage', {
@@ -49,8 +62,26 @@ const MediaShare = ({ documentId }) => {
           await setDoc(docRef, {
             urls: [...currentUrls, imageUrl]
           }, { merge: true });
+
+          // Track successful paste uploads for feature usage analysis
+          logAnalyticsEvent('media_paste_upload_success', {
+            file_size: file.size,              // File size for performance tracking
+            file_type: file.type,              // File type for format analysis
+            user_id: user.uid,                 // User identifier
+            document_id: documentId,           // Target document
+            total_images: currentUrls.length + 1 // Total images in collection
+          });
         } catch (err) {
           setError('Error uploading pasted image: ' + err.message);
+          
+          // Track paste upload errors to identify upload issues
+          logAnalyticsEvent('media_paste_upload_error', {
+            error_message: err.message,        // Specific error message
+            file_size: file.size,              // File size that failed
+            file_type: file.type,              // File type that failed
+            user_id: user.uid,                 // User identifier for support
+            document_id: documentId            // Target document
+          });
         } finally {
           setPasteLoading(false);
         }
@@ -58,11 +89,16 @@ const MediaShare = ({ documentId }) => {
     }
   }, [user, documentId]);
 
+  // Set up global paste event listener
   useEffect(() => {
     document.addEventListener('paste', handlePaste);
     return () => document.removeEventListener('paste', handlePaste);
   }, [handlePaste]);
 
+  /**
+   * Set up real-time listener for media document changes
+   * Tracks when media is loaded for engagement analysis
+   */
   useEffect(() => {
     if (!user) return;
 
@@ -70,13 +106,27 @@ const MediaShare = ({ documentId }) => {
 
     const unsubscribe = onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
-        setMediaUrls(doc.data().urls || []);
+        const urls = doc.data().urls || [];
+        setMediaUrls(urls);
+        
+        // Track media loading to understand content access patterns
+        if (urls.length > 0) {
+          logAnalyticsEvent('media_loaded', {
+            user_id: user.uid,                 // User identifier
+            document_id: documentId,           // Which document was loaded
+            image_count: urls.length           // Number of images loaded
+          });
+        }
       }
     });
 
     return () => unsubscribe();
   }, [documentId, user]);
 
+  /**
+   * Handle successful uploads from the Cloudinary widget
+   * Tracks upload success with detailed file information
+   */
   const handleUploadSuccess = async (result) => {
     try {
       const imageUrl = result.info.secure_url;
@@ -87,11 +137,32 @@ const MediaShare = ({ documentId }) => {
       await setDoc(docRef, {
         urls: [...currentUrls, imageUrl]
       }, { merge: true });
+
+      // Track successful widget uploads for feature usage analysis
+      logAnalyticsEvent('media_upload_success', {
+        user_id: user.uid,                    // User identifier
+        document_id: documentId,              // Target document
+        file_size: result.info.bytes,         // File size in bytes
+        file_format: result.info.format,      // File format (jpg, png, etc.)
+        total_images: currentUrls.length + 1, // Total images in collection
+        upload_method: 'widget'               // Indicates widget upload method
+      });
     } catch (err) {
       setError('Error saving image: ' + err.message);
+      
+      // Track upload errors to identify widget issues
+      logAnalyticsEvent('media_upload_error', {
+        error_message: err.message,           // Specific error message
+        user_id: user.uid,                    // User identifier for support
+        document_id: documentId               // Target document
+      });
     }
   };
 
+  /**
+   * Handle bulk deletion of all media
+   * Tracks deletion attempts, success, and errors
+   */
   const handleDeleteAll = async () => {
     if (!window.confirm('Are you sure you want to delete all images? This cannot be undone.')) {
       return;
@@ -99,6 +170,13 @@ const MediaShare = ({ documentId }) => {
 
     setDeleting(true);
     setError(null);
+
+    // Track deletion attempts to understand user behavior
+    logAnalyticsEvent('media_delete_all_started', {
+      user_id: user?.uid,                     // User identifier
+      document_id: documentId,                // Target document
+      image_count: mediaUrls.length           // Number of images to delete
+    });
 
     try {
       // Delete from Cloudinary
@@ -130,11 +208,42 @@ const MediaShare = ({ documentId }) => {
       const docRef = doc(db, `users/${user.uid}/media`, documentId);
       await setDoc(docRef, { urls: [] }, { merge: true });
 
+      // Track successful bulk deletions
+      logAnalyticsEvent('media_delete_all_success', {
+        user_id: user?.uid,                   // User identifier
+        document_id: documentId,              // Target document
+        deleted_count: mediaUrls.length       // Number of images deleted
+      });
+
     } catch (err) {
       setError('Error deleting images: ' + err.message);
+      
+      // Track deletion errors to identify cleanup issues
+      logAnalyticsEvent('media_delete_all_error', {
+        error_message: err.message,           // Specific error message
+        user_id: user?.uid,                   // User identifier for support
+        document_id: documentId,              // Target document
+        image_count: mediaUrls.length         // Number of images that failed to delete
+      });
     } finally {
       setDeleting(false);
     }
+  };
+
+  /**
+   * Handle image viewing with analytics tracking
+   * Tracks which images users view for content engagement analysis
+   */
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    
+    // Track image views to understand content engagement
+    logAnalyticsEvent('media_image_viewed', {
+      user_id: user?.uid,                     // User identifier
+      document_id: documentId,                // Target document
+      image_index: mediaUrls.indexOf(imageUrl), // Position of image in collection
+      total_images: mediaUrls.length          // Total number of images available
+    });
   };
 
   return (
@@ -165,7 +274,7 @@ const MediaShare = ({ documentId }) => {
           <div
             key={index}
             className={styles.imageWrapper}
-            onClick={() => setSelectedImage(url)}
+            onClick={() => handleImageClick(url)}
           >
             <img src={url} alt={`Shared media ${index + 1}`} />
             <div className={styles.imageOverlay}>
@@ -216,7 +325,18 @@ const MediaShare = ({ documentId }) => {
           }}
         >
           {({ open }) => (
-            <button className={styles.uploadButton} onClick={() => open()}>
+            <button 
+              className={styles.uploadButton} 
+              onClick={() => {
+                open();
+                
+                // Track widget opens to understand upload method preferences
+                logAnalyticsEvent('media_upload_widget_opened', {
+                  user_id: user?.uid,          // User identifier
+                  document_id: documentId      // Target document
+                });
+              }}
+            >
               <FiImage className={styles.buttonIcon} />
               Upload Media
             </button>

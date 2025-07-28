@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { auth } from '@/lib/firebase';
+import { auth, logAnalyticsEvent } from '@/lib/firebase';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { FiMail, FiLock } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
@@ -24,37 +24,80 @@ const Login = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const isDevelopment = process.env.NODE_ENV === 'development';
 
+  // Redirect to dashboard if user is already authenticated
   useEffect(() => {
     if (user) {
       router.push('/dashboard');
     }
   }, [user, router]);
 
+  /**
+   * Handle Ash-only login with analytics tracking
+   * Tracks login attempts, success, and failures for the special Ash user
+   */
   const handleAshLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    // Track Ash login attempts for security monitoring
+    logAnalyticsEvent('login_attempted', {
+      login_method: 'ash',                    // Special login method for Ash
+      user_email: 'ash@syncnote.com'         // Fixed email for Ash user
+    });
+
     try {
       if (ashPassword === process.env.NEXT_PUBLIC_ASH_PASSWORD) {
         localStorage.setItem('isAshLoggedIn', 'true');
+        
+        // Track successful Ash login for admin access monitoring
+        logAnalyticsEvent('login_success', {
+          login_method: 'ash',                // Special login method
+          user_email: 'ash@syncnote.com'     // Fixed email for Ash user
+        });
+        
         window.location.href = '/dashboard';
       } else {
         setError('Invalid password');
+        
+        // Track failed Ash login attempts for security monitoring
+        logAnalyticsEvent('login_failed', {
+          login_method: 'ash',                // Special login method
+          error_type: 'invalid_password',     // Type of failure
+          user_email: 'ash@syncnote.com'     // Fixed email for Ash user
+        });
       }
     } catch (error) {
       setError('Login failed: ' + error.message);
+      
+      // Track Ash login errors for debugging
+      logAnalyticsEvent('login_error', {
+        login_method: 'ash',                  // Special login method
+        error_message: error.message,         // Specific error message
+        user_email: 'ash@syncnote.com'       // Fixed email for Ash user
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Handle email/password login with comprehensive analytics tracking
+   * Tracks login attempts, success, failures, and email verification status
+   */
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    // Track email login attempts for user behavior analysis
+    logAnalyticsEvent('login_attempted', {
+      login_method: 'email',                  // Standard email login method
+      user_email: email                       // User's email address
+    });
+
     try {
+      // Verify reCAPTCHA in production for security
       if (!isDevelopment) {
         if (!executeRecaptcha) {
           throw new Error('reCAPTCHA not initialized');
@@ -75,37 +118,76 @@ const Login = () => {
 
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
+      // Check if email is verified before allowing login
       if (!userCredential.user.emailVerified) {
         setError('Please verify your email address before logging in.');
         await auth.signOut();
+        
+        // Track unverified email login attempts for user guidance
+        logAnalyticsEvent('login_failed', {
+          login_method: 'email',              // Standard email login method
+          error_type: 'email_not_verified',   // Type of failure
+          user_email: email                   // User's email address
+        });
+        
         setLoading(false);
         return;
       }
       
+      // Track successful email login for user engagement analysis
+      logAnalyticsEvent('login_success', {
+        login_method: 'email',                // Standard email login method
+        user_email: email,                    // User's email address
+        user_id: userCredential.user.uid,     // User's unique identifier
+        user_display_name: userCredential.user.displayName // User's display name
+      });
+      
       router.push('/dashboard');
     } catch (error) {
+      let errorType = 'unknown';
       switch (error.code) {
         case 'auth/invalid-email':
           setError('Invalid email address.');
+          errorType = 'invalid_email';
           break;
         case 'auth/user-disabled':
           setError('This account has been disabled.');
+          errorType = 'user_disabled';
           break;
         case 'auth/user-not-found':
         case 'auth/wrong-password':
           setError('Invalid email or password.');
+          errorType = 'invalid_credentials';
           break;
         default:
           setError(error.message);
+          errorType = 'other';
       }
+      
+      // Track failed email login attempts for security and UX analysis
+      logAnalyticsEvent('login_failed', {
+        login_method: 'email',                // Standard email login method
+        error_type: errorType,                // Type of failure
+        error_code: error.code,               // Firebase error code
+        user_email: email                     // User's email address
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Handle Google OAuth login with analytics tracking
+   * Tracks Google login attempts, success, and failures
+   */
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError('');
+    
+    // Track Google login attempts for OAuth usage analysis
+    logAnalyticsEvent('login_attempted', {
+      login_method: 'google'                  // Google OAuth login method
+    });
     
     try {
       const provider = new GoogleAuthProvider();
@@ -114,16 +196,36 @@ const Login = () => {
       
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
+        
+        // Track successful Google login for OAuth adoption analysis
+        logAnalyticsEvent('login_success', {
+          login_method: 'google',             // Google OAuth login method
+          user_email: result.user.email,      // User's email from Google
+          user_id: result.user.uid,           // User's unique identifier
+          user_display_name: result.user.displayName // User's display name from Google
+        });
+        
         router.push('/dashboard');
       }
     } catch (error) {
       console.error('Google Sign In Error:', error);
       setError('Failed to sign in with Google: ' + error.message);
+      
+      // Track failed Google login attempts for OAuth troubleshooting
+      logAnalyticsEvent('login_failed', {
+        login_method: 'google',               // Google OAuth login method
+        error_type: 'google_signin_failed',   // Type of failure
+        error_message: error.message          // Specific error message
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Handle password reset requests with analytics tracking
+   * Tracks reset attempts, success, and failures
+   */
   const handleForgotPassword = async () => {
     if (!email) {
       setError('Please enter your email address first.');
@@ -133,24 +235,70 @@ const Login = () => {
     setLoading(true);
     setError('');
     
+    // Track password reset requests for user support analysis
+    logAnalyticsEvent('password_reset_requested', {
+      user_email: email                       // User's email address
+    });
+    
     try {
       await sendPasswordResetEmail(auth, email);
       setSuccess('Password reset link has been sent to your email.');
       setTimeout(() => setSuccess(''), 5000);
+      
+      // Track successful password reset emails for delivery monitoring
+      logAnalyticsEvent('password_reset_email_sent', {
+        user_email: email                     // User's email address
+      });
     } catch (error) {
+      let errorType = 'unknown';
       switch (error.code) {
         case 'auth/invalid-email':
           setError('Invalid email address.');
+          errorType = 'invalid_email';
           break;
         case 'auth/user-not-found':
           setError('No account found with this email.');
+          errorType = 'user_not_found';
           break;
         default:
           setError('Failed to send reset email. Please try again.');
+          errorType = 'other';
       }
+      
+      // Track password reset errors for troubleshooting
+      logAnalyticsEvent('password_reset_error', {
+        error_type: errorType,                // Type of error
+        error_code: error.code,               // Firebase error code
+        user_email: email                     // User's email address
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Handle login mode switching with analytics tracking
+   * Tracks user preferences between Ash-only and email login modes
+   */
+  const handleLoginModeChange = (mode) => {
+    setLoginMode(mode);
+    
+    // Track login mode changes for UX analysis
+    logAnalyticsEvent('login_mode_changed', {
+      from_mode: loginMode,                   // Previous login mode
+      to_mode: mode                           // New login mode
+    });
+  };
+
+  /**
+   * Handle signup page navigation with analytics tracking
+   * Tracks user interest in account creation
+   */
+  const handleSignUpToggle = () => {
+    setIsSignUp(true);
+    
+    // Track signup page access for conversion analysis
+    logAnalyticsEvent('signup_page_accessed');
   };
 
   if (isSignUp) {
@@ -170,13 +318,13 @@ const Login = () => {
           <div className={styles.loginModeToggle}>
             <button
               className={`${styles.modeButton} ${loginMode === 'ash' ? styles.activeMode : ''}`}
-              onClick={() => setLoginMode('ash')}
+              onClick={() => handleLoginModeChange('ash')}
             >
               Ash Only
             </button>
             <button
               className={`${styles.modeButton} ${loginMode === 'email' ? styles.activeMode : ''}`}
-              onClick={() => setLoginMode('email')}
+              onClick={() => handleLoginModeChange('email')}
             >
               Email Login
             </button>
@@ -198,10 +346,10 @@ const Login = () => {
               
               <button 
                 type="submit" 
-                className={styles.primaryButton}
+                className={styles.submitButton}
                 disabled={loading}
               >
-                Login as Ash
+                {loading ? 'Logging in...' : 'Login as Ash'}
               </button>
             </form>
           ) : (
@@ -218,7 +366,7 @@ const Login = () => {
                     required
                   />
                 </div>
-
+                
                 <div className={styles.inputGroup}>
                   <FiLock className={styles.inputIcon} />
                   <input
@@ -230,60 +378,53 @@ const Login = () => {
                     required
                   />
                 </div>
+                
                 <button 
                   type="submit" 
-                  className={styles.primaryButton}
+                  className={styles.submitButton}
                   disabled={loading}
                 >
-                  Login
+                  {loading ? 'Logging in...' : 'Login'}
                 </button>
-                <div className={styles.forgotPassword}>
-                  <button 
-                    type="button"
-                    onClick={handleForgotPassword}
-                    className={styles.forgotPasswordButton}
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-
-                {error && (
-                  <div className={styles.error}>
-                    {error}
-                  </div>
-                )}
-
-                {success && (
-                  <div className={styles.success}>
-                    {success}
-                  </div>
-                )}
               </form>
 
               <div className={styles.divider}>
-                <span>or continue with</span>
+                <span>or</span>
               </div>
 
-              <button
+              <button 
                 onClick={handleGoogleLogin}
-                disabled={loading}
                 className={styles.googleButton}
+                disabled={loading}
               >
-                <FcGoogle />
-                Sign in with Google
+                <FcGoogle className={styles.googleIcon} />
+                Continue with Google
               </button>
 
-              <p className={styles.switchMode}>
-                Don&#39;t have an account?{' '}
+              <div className={styles.forgotPassword}>
                 <button 
-                  onClick={() => setIsSignUp(true)} 
-                  className={styles.switchButton}
+                  type="button" 
+                  onClick={handleForgotPassword}
+                  className={styles.forgotPasswordButton}
                 >
-                  Sign Up
+                  Forgot Password?
                 </button>
-              </p>
+              </div>
             </>
           )}
+
+          {error && <div className={styles.error}>{error}</div>}
+          {success && <div className={styles.success}>{success}</div>}
+
+          <div className={styles.signupSection}>
+            <p>Don't have an account?</p>
+            <button 
+              onClick={handleSignUpToggle}
+              className={styles.signupButton}
+            >
+              Sign Up
+            </button>
+          </div>
         </div>
       </div>
     </>

@@ -1,0 +1,141 @@
+.analyticsContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.toggleButton {
+  background: #0078ff;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 120, 255, 0.3);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #0056cc;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 120, 255, 0.4);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.dashboard {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  width: 400px;
+  max-height: 600px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  overflow-y: auto;
+  border: 1px solid #e1e5e9;
+
+  h3 {
+    margin: 0 0 16px 0;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.eventCategory {
+  h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 11px;
+      color: #d63384;
+      font-weight: 500;
+    }
+  }
+}
+
+.instructions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e1e5e9;
+
+  h4 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+
+    li {
+      margin: 4px 0;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .dashboard {
+    width: 320px;
+    max-height: 500px;
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .analyticsContainer {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .dashboard {
+    width: 280px;
+    max-height: 400px;
+    right: -20px;
+  }
+} 
