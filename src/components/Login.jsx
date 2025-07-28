@@ -346,7 +346,7 @@ const Login = () => {
               
               <button 
                 type="submit" 
-                className={styles.submitButton}
+                className={styles.primaryButton}
                 disabled={loading}
               >
                 {loading ? 'Logging in...' : 'Login as Ash'}
@@ -381,7 +381,7 @@ const Login = () => {
                 
                 <button 
                   type="submit" 
-                  className={styles.submitButton}
+                  className={styles.primaryButton}
                   disabled={loading}
                 >
                   {loading ? 'Logging in...' : 'Login'}
@@ -420,7 +420,7 @@ const Login = () => {
             <p>Don't have an account?</p>
             <button 
               onClick={handleSignUpToggle}
-              className={styles.signupButton}
+              className={styles.switchButton}
             >
               Sign Up
             </button>
