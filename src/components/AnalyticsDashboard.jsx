@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './AnalyticsDashboard.module.scss';
-import { FiBarChart3, FiUsers, FiActivity, FiTrendingUp } from 'react-icons/fi';
+import { FiBarChart, FiUsers, FiActivity, FiTrendingUp } from 'react-icons/fi';
 
 /**
  * Analytics Dashboard Component
@@ -46,7 +46,7 @@ const AnalyticsDashboard = () => {
         onClick={toggleVisibility}
         className={styles.toggleButton}
       >
-        <FiBarChart3 />
+        <FiBarChart />
         Analytics
       </button>
       
