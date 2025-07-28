@@ -1,18 +1,30 @@
 {
   "workbench.colorCustomizations": {
-    "activityBar.background": "#001900",
-    "titleBar.activeBackground": "#002600",
-    "statusBar.background": "#001900",
-    "sideBar.background": "#002600",
-    "tab.activeBackground": "#003300",
-    "tab.inactiveBackground": "#002600",
-    "tab.hoverBackground": "#004d00",
+    "activityBar.background": "#1a0a1a",
+    "titleBar.activeBackground": "#2d0a2d",
+    "statusBar.background": "#1a0a1a",
+    "sideBar.background": "#2d0a2d",
+    "tab.activeBackground": "#4a0a4a",
+    "tab.inactiveBackground": "#2d0a2d",
+    "tab.hoverBackground": "#5a0a5a",
     "tab.activeForeground": "#ffffff",
     "tab.hoverForeground": "#ffffff",
-
-    "tab.unfocusedActiveBackground": "#002600",
-    "tab.unfocusedInactiveBackground": "#001900",
-    "editorGroupHeader.tabsBackground": "#001900",
-    "editor.background": "#141414"
+    "tab.unfocusedActiveBackground": "#2d0a2d",
+    "tab.unfocusedInactiveBackground": "#1a0a1a",
+    "editorGroupHeader.tabsBackground": "#1a0a1a",
+    "editor.background": "#0a0a0a",
+    "editor.foreground": "#e0e0e0",
+    "editor.lineHighlightBackground": "#1a0a1a",
+    "editor.selectionBackground": "#4a0a4a",
+    "editor.inactiveSelectionBackground": "#2d0a2d",
+    "editor.findMatchBackground": "#5a0a5a",
+    "editor.findMatchHighlightBackground": "#4a0a4a",
+    "editorCursor.foreground": "#ffffff",
+    "terminal.background": "#0a0a0a",
+    "terminal.foreground": "#e0e0e0",
+    "panel.background": "#1a0a1a",
+    "sideBarSectionHeader.background": "#2d0a2d",
+    "statusBar.foreground": "#e0e0e0",
+    "titleBar.activeForeground": "#e0e0e0"
   }
 }
