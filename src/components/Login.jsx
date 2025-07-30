@@ -40,7 +40,7 @@ const Login = () => {
     setLoading(true);
     setError('');
 
-    console.log('🔐 Ash login attempt started...');
+    // console.log('🔐 Ash login attempt started...');
 
     // Track Ash login attempts for security monitoring
     logAnalyticsEvent('login_attempted', {
@@ -50,7 +50,7 @@ const Login = () => {
 
     try {
       if (ashPassword === process.env.NEXT_PUBLIC_ASH_PASSWORD) {
-        console.log('✅ Ash password correct, logging in...');
+        // console.log('✅ Ash password correct, logging in...');
         localStorage.setItem('isAshLoggedIn', 'true');
         
         // Track successful Ash login for admin access monitoring
@@ -59,10 +59,10 @@ const Login = () => {
           user_email: 'ash@syncnote.com'     // Fixed email for Ash user
         });
         
-        console.log('🚀 Redirecting to dashboard...');
+        // console.log('🚀 Redirecting to dashboard...');
         window.location.href = '/dashboard';
       } else {
-        console.log('❌ Ash password incorrect');
+        // console.log('❌ Ash password incorrect');
         setError('Invalid password');
         
         // Track failed Ash login attempts for security monitoring
@@ -73,7 +73,7 @@ const Login = () => {
         });
       }
     } catch (error) {
-      console.log('💥 Ash login error:', error);
+      // console.log('💥 Ash login error:', error);
       setError('Login failed: ' + error.message);
       
       // Track Ash login errors for debugging
@@ -96,7 +96,7 @@ const Login = () => {
     setLoading(true);
     setError('');
 
-    console.log('🔐 Email login attempt started...', { email });
+    // console.log('🔐 Email login attempt started...', { email });
 
     // Track email login attempts for user behavior analysis
     logAnalyticsEvent('login_attempted', {
@@ -124,12 +124,12 @@ const Login = () => {
         }
       }
 
-      console.log('🔑 Attempting Firebase authentication...');
+      // console.log('🔑 Attempting Firebase authentication...');
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // Check if email is verified before allowing login
       if (!userCredential.user.emailVerified) {
-        console.log('❌ Email not verified');
+        // console.log('❌ Email not verified');
         setError('Please verify your email address before logging in.');
         await auth.signOut();
         
@@ -144,7 +144,7 @@ const Login = () => {
         return;
       }
       
-      console.log('✅ Email login successful:', userCredential.user.email);
+      // console.log('✅ Email login successful:', userCredential.user.email);
       
       // Track successful email login for user engagement analysis
       logAnalyticsEvent('login_success', {
@@ -154,9 +154,14 @@ const Login = () => {
         user_display_name: userCredential.user.displayName // User's display name
       });
       
+      // Also send standard Firebase login event for better DebugView visibility
+      logAnalyticsEvent('login', {
+        method: 'email'
+      });
+      
       router.push('/dashboard');
     } catch (error) {
-      console.log('💥 Email login error:', error);
+      // console.log('💥 Email login error:', error);
       let errorType = 'unknown';
       switch (error.code) {
         case 'auth/invalid-email':
@@ -178,12 +183,21 @@ const Login = () => {
       }
       
       // Track failed email login attempts for security and UX analysis
+      // console.log('📊 Sending login_failed analytics event:', {
+      //   login_method: 'email',
+      //   error_type: errorType,
+      //   error_code: error.code,
+      //   user_email: email
+      // });
+      
       logAnalyticsEvent('login_failed', {
         login_method: 'email',                // Standard email login method
         error_type: errorType,                // Type of failure
         error_code: error.code,               // Firebase error code
         user_email: email                     // User's email address
       });
+      
+      // console.log('✅ login_failed event sent to analytics');
     } finally {
       setLoading(false);
     }
@@ -197,7 +211,7 @@ const Login = () => {
     setLoading(true);
     setError('');
     
-    console.log('🔐 Google login attempt started...');
+    // console.log('Google login attempt started...');
     
     // Track Google login attempts for OAuth usage analysis
     logAnalyticsEvent('login_attempted', {
@@ -209,10 +223,10 @@ const Login = () => {
       provider.addScope('email');
       provider.addScope('profile');
       
-      console.log('🔑 Opening Google popup...');
+      // console.log('🔑 Opening Google popup...');
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
-        console.log('✅ Google login successful:', result.user.email);
+        // console.log('✅ Google login successful:', result.user.email);
         
         // Track successful Google login for OAuth adoption analysis
         logAnalyticsEvent('login_success', {
@@ -225,8 +239,8 @@ const Login = () => {
         router.push('/dashboard');
       }
     } catch (error) {
-      console.log('💥 Google login error:', error);
-      console.error('Google Sign In Error:', error);
+      // console.log('💥 Google login error:', error);
+      // console.error('Google Sign In Error:', error);
       setError('Failed to sign in with Google: ' + error.message);
       
       // Track failed Google login attempts for OAuth troubleshooting

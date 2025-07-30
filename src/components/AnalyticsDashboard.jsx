@@ -33,7 +33,7 @@ const AnalyticsDashboard = () => {
         onClick={toggleVisibility}
         className={styles.toggleButton}
       >
-        📊 Analytics
+        Analytics
       </button>
       
       {/* Analytics Dashboard Panel */}
@@ -102,18 +102,29 @@ const AnalyticsDashboard = () => {
               </ul>
             </div>
           </div>
+
+          {/* Test Login Failed Event - To be removed
+          <button 
+            onClick={() => {
+              logEvent("login_failed", {
+                reason: "invalid_password", 
+                user_id: "ash"
+              });
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(255, 75, 43, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(255, 75, 43, 0.3)';
+            }}
+          >
+
+            🔒 Test Login Failed
+          </button>
+        */}          
           
-          {/* Testing Instructions Section */}
-          <div className={styles.instructions}>
-            <h4>How to Test in Firebase Console:</h4>
-            <ol>
-              <li>Go to your Firebase Console</li>
-              <li>Navigate to Analytics → Events</li>
-              <li>Use the DebugView to see real-time events</li>
-              <li>Perform actions in the app to trigger events</li>
-              <li>Check the Events tab to see all triggered events</li>
-            </ol>
-          </div>
         </div>
       )}
     </div>

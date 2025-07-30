@@ -24,7 +24,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ## Testing Events in Firebase Console
 
 ### 1. Real-time Testing with DebugView
-1. **Open Firebase Console** → Your Project → Analytics
+1. **Open Firebase Console** → Project → Analytics
 2. **Navigate to DebugView** (in the left sidebar)
 3. **Start your app** and perform actions
 4. **Watch events appear in real-time** in the DebugView
@@ -148,7 +148,7 @@ npm run dev
 
 ### 2. Open Firebase Console
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Select your project
+2. Select Project
 3. Navigate to Analytics → DebugView
 
 ### 3. Test Authentication Flow

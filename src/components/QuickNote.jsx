@@ -52,7 +52,7 @@ const QuickNote = ({ documentId }) => {
   const handleSave = async (clear = false) => {
     if (!user) return;
     
-    console.log('💾 QuickNote save attempt:', { clear, textLength: text.length });
+    // console.log('💾 QuickNote save attempt:', { clear, textLength: text.length });
     
     setSaving(true);
     setError(null);
@@ -65,7 +65,7 @@ const QuickNote = ({ documentId }) => {
       
       if (clear) {
         setText('');
-        console.log('🗑️ QuickNote cleared');
+        // console.log('🗑️ QuickNote cleared');
         
         // Track quick note clearing to understand user behavior patterns
         logAnalyticsEvent('quicknote_cleared', {
@@ -74,7 +74,7 @@ const QuickNote = ({ documentId }) => {
           text_length_before: text.length     // How much text was cleared
         });
       } else {
-        console.log('✅ QuickNote saved successfully');
+        // console.log('✅ QuickNote saved successfully');
         
         // Track successful quick note saves to understand content creation patterns
         logAnalyticsEvent('quicknote_saved', {
@@ -85,7 +85,7 @@ const QuickNote = ({ documentId }) => {
         });
       }
     } catch (err) {
-      console.log('❌ QuickNote save error:', err);
+      // console.log('❌ QuickNote save error:', err);
       setError('Error saving: ' + err.message);
       
       // Track save errors to identify data persistence issues

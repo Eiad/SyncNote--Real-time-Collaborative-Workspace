@@ -28,7 +28,7 @@ let analytics = null;
 if (typeof window !== 'undefined') {
   try {
     analytics = getAnalytics(app);
-    console.log('✅ Firebase Analytics initialized successfully');
+    // console.log('✅ Firebase Analytics initialized successfully');
     
     // Enable analytics collection
     setAnalyticsCollectionEnabled(analytics, true);
@@ -50,19 +50,25 @@ if (typeof window !== 'undefined') {
         test_param: 'initialization_test',
         timestamp: Date.now()
       });
-      console.log('🧪 Analytics test event sent');
+      // console.log('🧪 Analytics test event sent');
       
       // Send a page_view event which is more likely to show in DebugView
       logEvent(analytics, 'page_view', {
         page_title: 'SyncNote Dashboard',
         page_location: window.location.href
       });
-      console.log('📄 Page view event sent');
+      // console.log('📄 Page view event sent');
+      
+      // Send a login event (standard Firebase event)
+      logEvent(analytics, 'login', {
+        method: 'email'
+      });
+      // console.log('🔐 Login event sent');
       
     }, 1000);
     
   } catch (error) {
-    console.error('❌ Firebase Analytics initialization failed:', error);
+    // console.error('❌ Firebase Analytics initialization failed:', error);
   }
 }
 
@@ -103,21 +109,21 @@ if (typeof window !== 'undefined') {
  */
 export const logAnalyticsEvent = (eventName, parameters = {}) => {
   // Debug logging to help identify issues
-  console.log('📊 Analytics Event:', eventName, parameters);
+  // console.log('📊 Analytics Event:', eventName, parameters);
   
   // Only log events on client side and when analytics is available
   if (typeof window !== 'undefined') {
     if (analytics) {
       try {
         logEvent(analytics, eventName, parameters);
-        console.log('✅ Analytics event logged successfully:', eventName);
+        // console.log('✅ Analytics event logged successfully:', eventName);
       } catch (error) {
-        console.error('❌ Failed to log analytics event:', eventName, error);
+        // console.error('❌ Failed to log analytics event:', eventName, error);
       }
     } else {
-      console.warn('⚠️ Analytics not initialized, skipping event:', eventName);
+      // console.warn('⚠️ Analytics not initialized, skipping event:', eventName);
     }
   } else {
-    console.log('🔄 Server-side rendering, skipping analytics event:', eventName);
+    // console.log('🔄 Server-side rendering, skipping analytics event:', eventName);
   }
 };

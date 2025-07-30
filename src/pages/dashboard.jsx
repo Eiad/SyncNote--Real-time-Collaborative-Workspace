@@ -9,6 +9,7 @@ import GlobalLoader from '@/components/GlobalLoader';
 import QuickNote from '@/components/QuickNote';
 import FileShare from '@/components/FileShare';
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
+import AlertMonitor from '@/components/AlertMonitor';
 import styles from '@/styles/Home.module.scss';
 
 const Dashboard = () => {
@@ -21,7 +22,7 @@ const Dashboard = () => {
    * Test analytics function for debugging
    */
   const testAnalytics = () => {
-    console.log('🧪 Testing analytics...');
+    // console.log('🧪 Testing analytics...');
     logAnalyticsEvent('test_event', {
       test_param: 'test_value',
       timestamp: Date.now()
@@ -48,7 +49,7 @@ const Dashboard = () => {
    * Tracks logout success, errors, and session duration
    */
   const handleLogout = async () => {
-    console.log('🚪 Logout attempt started...');
+    // console.log('Logout attempt started...');
     setLoggingOut(true);
     const startTime = Date.now(); // Track session duration
     
@@ -60,7 +61,7 @@ const Dashboard = () => {
     });
     
     try {
-      console.log('🔐 Signing out from Firebase...');
+      // console.log('🔐 Signing out from Firebase...');
       await auth.signOut();
       localStorage.removeItem('isAshLoggedIn');
       
@@ -69,11 +70,11 @@ const Dashboard = () => {
       const remainingTime = Math.max(1500 - elapsedTime, 0);
       await new Promise(resolve => setTimeout(resolve, remainingTime));
       
-      console.log('🏠 Redirecting to home...');
+      // console.log('🏠 Redirecting to home...');
       window.location.href = '/';
     } catch (error) {
-      console.log('💥 Logout error:', error);
-      console.error('Logout failed:', error);
+      // console.log('💥 Logout error:', error);
+      // console.error('Logout failed:', error);
       
       // Track logout errors to identify authentication issues
       logAnalyticsEvent('logout_error', {
@@ -200,36 +201,54 @@ const Dashboard = () => {
         <footer className={styles.dashboardFooter}>
           <div className={styles.footerContent}>
             <p>© {new Date().getFullYear()} SyncNote. All rights reserved.</p>
-            <p className={styles.developerCredit}>Developed with ❤️ by Ash</p>
+            {/* <p className={styles.developerCredit}>Developed with ❤️ by Ash</p> */}
           </div>
         </footer>
       </div>
       
       {/* Analytics Dashboard - Only visible to Ash for testing and monitoring */}
-      <AnalyticsDashboard />
+      {/* <AnalyticsDashboard /> */}
+      
+      {/* Alert Monitor - Only visible to Ash for proactive monitoring */}
+      {/* <AlertMonitor /> */}
       
       {/* Test Analytics Button - Only for Ash */}
-      {user.displayName === 'Ash' && (
+      {/* {user.displayName === 'Ash' && (
         <div style={{
           position: 'fixed',
           bottom: '20px',
-          left: '20px',
-          background: '#ff6b6b',
-          color: 'white',
-          border: 'none',
-          padding: '10px 15px',
-          borderRadius: '5px',
-          cursor: 'pointer',
+          right: '120px',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '8px',
           zIndex: 1000
         }}>
           <button 
             onClick={testAnalytics}
             style={{
-              background: 'transparent',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               border: 'none',
+              padding: '10px 16px',
+              borderRadius: '8px',
               cursor: 'pointer',
-              marginBottom: '5px'
+              fontSize: '12px',
+              fontWeight: '500',
+              boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              minWidth: '120px',
+              justifyContent: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
             }}
           >
             🧪 Test Analytics
@@ -242,11 +261,29 @@ const Dashboard = () => {
               });
             }}
             style={{
-              background: 'transparent',
+              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
               color: 'white',
               border: 'none',
+              padding: '10px 16px',
+              borderRadius: '8px',
               cursor: 'pointer',
-              marginBottom: '5px'
+              fontSize: '12px',
+              fontWeight: '500',
+              boxShadow: '0 4px 12px rgba(245, 87, 108, 0.3)',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              minWidth: '120px',
+              justifyContent: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(245, 87, 108, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(245, 87, 108, 0.3)';
             }}
           >
             🔍 Debug Event
@@ -259,16 +296,35 @@ const Dashboard = () => {
               });
             }}
             style={{
-              background: 'transparent',
+              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
               color: 'white',
               border: 'none',
-              cursor: 'pointer'
+              padding: '10px 16px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '500',
+              boxShadow: '0 4px 12px rgba(79, 172, 254, 0.3)',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              minWidth: '120px',
+              justifyContent: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(79, 172, 254, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(79, 172, 254, 0.3)';
             }}
           >
             📄 Page View
           </button>
         </div>
-      )}
+      )} */}
     </>
   );
 };
