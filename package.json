@@ -9,8 +9,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@fontsource/mynerve": "^5.1.0",
     "@fontsource/mynerve": "^5.3.0",
     "@fontsource/poppins": "^5.3.0",
     "cloudinary": "^2.10.0",
